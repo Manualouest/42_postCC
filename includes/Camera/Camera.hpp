@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:25:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/12 22:42:27 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:59:16 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,10 @@ class Camera
 		int		width;
 		int		height;
 		float	speed = 0.1f;
-		float	sensitivity = 100.0f;
+		float	sensitivity = 50.0f;
+		int		lockCursor : 2;
 
-		Camera(int width, int height, glm::vec3 position);
-		void	Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform);
+		Camera(glm::vec3 position);
+		void	Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform, int nWidth, int nHeight);
 		void	Inputs(GLFWwindow *window);
 };
