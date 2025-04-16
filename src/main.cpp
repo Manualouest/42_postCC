@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:20:14 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/15 19:04:32 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/04/16 16:18:49 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ int	main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLfloat instanceIndex[] =
+	glm::vec3 instanceIndex[] =
 	{
-		0, 2, 0,
-		0, 4, 0,
-		0, 6, 0,
-		0, 8, 0
+		glm::vec3{1, 2, 0},
+		glm::vec3{0, 4, 1},
+		glm::vec3{2, 6, 0},
+		glm::vec3{0, 8, 2}
 	};
-
+	
 	GLfloat	vertices_Base[] =
 	{
 		-0.5f,	0.0f,	0.5f,	1.0f,	0.0f,	0.0f,	0.0f, 0.0f,
@@ -168,13 +168,13 @@ int	main()
 		camera.Matrix(45.0f, 0.1f, 10000.0f, shader, "camMatrix", width, height);
 		shader.Activate();
 		
-		glUniform3fv(uniID, 12, instanceIndex);
+		glUniform3fv(uniID, 4, reinterpret_cast<GLfloat*>(instanceIndex));
 		
 		cat.Bind();
 		VAO1.Bind();
 		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		// GLenum mode, GLsizei count, GLenum type, const void *indices
-		glDrawElementsInstanced(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0, 100);
+		
+		glDrawElementsInstanced(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0, 4);
 
 		glfwSwapBuffers(window);
 		

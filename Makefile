@@ -18,7 +18,8 @@ SRC = main.cpp\
 		Buffers/VAO.cpp\
 		Buffers/EBO.cpp\
 		Texture/Texture.cpp\
-		Camera/Camera.cpp
+		Camera/Camera.cpp\
+		Generation/Perlin.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 
