@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Perlin.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbirou <manutea.birou@gmail.com>           +#+  +:+       +#+        */
+/*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 16:18:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/18 13:28:46 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/01 10:49:45 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cmath>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

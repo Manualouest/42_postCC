@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Perlin.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbirou <manutea.birou@gmail.com>           +#+  +:+       +#+        */
+/*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:44:08 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/18 15:02:54 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/01 10:49:12 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Generation/Perlin.hpp>
-#include <spellBook.hpp>
-#include <iostream>
-#include <sstream>
 
 glm::vec2		Perlin::ChunkGrad[4 * 5] = {glm::vec2{0, 0}};
 unsigned int	Perlin::seed = 0;
@@ -26,9 +23,10 @@ void	Perlin::setupSeed(const unsigned int &nSeed)
 
 float	Perlin::computePerlin(const glm::vec2 &pointCoord)
 {
-	precomputeChunkPerlin({(int)pointCoord.x, (int)pointCoord.y});
-	// PRINT "coords: " AND pointCoord.x AND ";" AND pointCoord.y AND ", " AND pointCoord.x - (int)pointCoord.x AND ";" AND pointCoord.y - (int)pointCoord.y CENDL;
-	return (getChunkPerlin({pointCoord.x - (int)pointCoord.x, pointCoord.y - (int)pointCoord.y}));
+	// precomputeChunkPerlin({(int)pointCoord.x, (int)pointCoord.y});
+	// // PRINT "coords: " AND pointCoord.x AND ";" AND pointCoord.y AND ", " AND pointCoord.x - (int)pointCoord.x AND ";" AND pointCoord.y - (int)pointCoord.y CENDL;
+	// return (getChunkPerlin({pointCoord.x - (int)pointCoord.x, pointCoord.y - (int)pointCoord.y}));
+	return (sin(pointCoord.x + pointCoord.y));
 }
 
 glm::vec2 Perlin::randomGradient(const int &ix, const int &iy)
@@ -115,26 +113,3 @@ float	Perlin::getChunkPerlin(const glm::vec2 &pointCoord)
 
 	return (val);
 }
-
-int	main()
-{
-	int	val;
-	Perlin::setupSeed(3284157443);
-	// Perlin::precomputeChunkPerlin(glm::vec2{0, 0});
-	// Perlin::precomputeChunkPerlin(glm::vec2{1, 0});
-	// Perlin::precomputeChunkPerlin(glm::vec2{0, 1});
-	// Perlin::precomputeChunkPerlin(glm::vec2{1, 1});
-	for (float  i = 0; i < 32 * 2; ++i)
-	{
-		for (float  ii = 0; ii < 32 * 2; ++ii)
-		{
-			val = (Perlin::computePerlin(glm::vec2{ii / 32, i / 32}) + 1.f) * 0.5f * 255.f;
-			std::stringstream	str;
-			str << "\033[38;2;" << val << ";" << val << ";" << val << "m";
-			PRINT str.str().c_str() AND "0" CLR;
-			// PRINT val AND "," AND (val < 100 ? (val < 10 ? "  " : " ") : "");
-		}
-		NEWL;
-	}
-}
-

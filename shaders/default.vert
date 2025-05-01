@@ -14,7 +14,7 @@ uniform vec3 indexs[4];
 
 void main()
 {
-	gl_Position = camMatrix * vec4(aPos + indexs[gl_InstanceID], 1.0);
+	gl_Position = camMatrix * vec4(aPos.x, aPos.y + gl_InstanceID * 2, aPos.z, 1.0);
 	color = aColor;
 	texCoord = aTex;
 }
