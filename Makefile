@@ -20,7 +20,8 @@ SRC = main.cpp\
 		Texture/Texture.cpp\
 		Camera/Camera.cpp\
 		Generation/Perlin.cpp\
-		Generation/ChunkHandler.cpp
+		Generation/ChunkHandler.cpp\
+		Generation/Chunk.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 
@@ -131,4 +132,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all glfw glm clean fclean re cleanlibs
+.PHONY: all glfw glad glm clean fclean re cleanlibs

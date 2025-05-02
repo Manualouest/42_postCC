@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:15:01 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/12 21:50:13 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/02 11:53:08 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@
 class VAO
 {
 	public:
-		GLuint	ID;
 		VAO();
 
 		void	linkAttrib(VBO &VBO, GLuint layout, GLuint numComponents, GLuint type, GLsizeiptr stride, void *offset);
 		void	Bind();
 		void	Unbind();
 		void	Delete();
+
+		GLuint	ID;
 };

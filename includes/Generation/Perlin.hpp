@@ -6,9 +6,11 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 16:18:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/01 10:49:45 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/02 11:15:49 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include <cmath>
 #include <glm/glm.hpp>

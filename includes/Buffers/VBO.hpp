@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:15:01 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/12 18:16:37 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/02 11:53:23 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@
 class VBO
 {
 	public:
-		GLuint	ID;
+		VBO();
 		VBO(GLfloat *vertices, GLsizeiptr size);
 
 		void	Bind();
 		void	Unbind();
 		void	Delete();
+
+		GLuint	ID;
 };

@@ -6,11 +6,14 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:16:57 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/15 14:19:45 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/02 11:52:41 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Buffers/VBO.hpp>
+
+VBO::VBO()
+{}
 
 VBO::VBO(GLfloat *vertices, GLsizeiptr size)
 {
