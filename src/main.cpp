@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:20:14 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/02 18:57:48 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/03 17:01:37 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <Texture/Texture.hpp>
 #include <Camera/Camera.hpp>
 #include <Generation/ChunkHandler.hpp>
+#include <ChunkLoader/ChunkLoader.hpp>
 
 
 #include <iomanip>
@@ -147,8 +148,10 @@ int	main()
 	cat.texUnit(shader, "tex0", 0);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
-	Camera camera(glm::vec3(0.0f, 0.0f, -1.0f));
+	Camera camera(glm::vec3(0.0f, 100.0f, -20.0f));
 
 	GLuint uniID = glGetUniformLocation(shader.ID, "indexs");
 
@@ -156,7 +159,6 @@ int	main()
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	glfwSetCursorPos(window, width / 2, height / 2);
 
 	camera.Matrix(45.0f, 0.1f, 100.0f, shader, "camMatrix", width, height);
 
@@ -170,16 +172,16 @@ int	main()
 
 	// glfwSwapInterval(0); //danger
 
-	timespec				Start;
-	timespec				End;
-	timespec_get(&Start, TIME_UTC);
-	Chunk	test(glm::vec2(0, 0));
-	timespec_get(&End, TIME_UTC);
+	// timespec				Start;
+	// timespec				End;
+	// timespec_get(&Start, TIME_UTC);
+	// Chunk	test(glm::vec2(0, 0));
+	// timespec_get(&End, TIME_UTC);
 
 	
-	PRINT BOLD "time take for 97: ";
-	printTime(End, Start);
-	PRINT "" CENDL;
+	// PRINT BOLD "time take for 97: ";
+	// printTime(End, Start);
+	// PRINT "" CENDL;
 
 	// for (int i = 0; i < 256; ++i)
 	// {
@@ -196,13 +198,14 @@ int	main()
 	// }
 
 
+	ChunkHandler	chunkHandler;
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 
 
 		// glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
-		// glfwGetWindowSize(window, &width, &height);
 		glfwPollEvents();
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
@@ -219,7 +222,12 @@ int	main()
 		cat.Bind();
 		// VAO1.Bind();
 		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		test.render();
+		
+		chunkHandler.UpdateChunks(camera.Position, camera.Orientation);
+		chunkHandler.RenderChunks();
+		
+		
+		
 		// glDrawElementsInstanced(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0, 400);
 
 		glfwSwapBuffers(window);
@@ -229,7 +237,11 @@ int	main()
 		nbFrames++;
 		if (delta >= 1.0)
 		{
+			glfwGetWindowSize(window, &width, &height);
+			glViewport(0, 0, width, height);
+			// glfwSetCursorPos(window, width / 2, height / 2);
 			std::stringstream	fps;
+			fps << "player pos: " << camera.Position.x << "; " << camera.Position.z << ", fps:";
 			fps  << (nbFrames / delta);
 			glfwSetWindowTitle(window, fps.str().c_str());
 			nbFrames = 0;
@@ -238,13 +250,12 @@ int	main()
 
 	}
 
+
 	// VAO1.Delete();
 	// VBO1.Delete();
 	// EBO1.Delete();
 	shader.Delete();
 	cat.Delete();
-
-	test.remove();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

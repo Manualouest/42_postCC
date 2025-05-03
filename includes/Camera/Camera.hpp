@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:25:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/14 19:59:16 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:26:50 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Camera
 {
 	public:
 		glm::vec3	Position;
-		glm::vec3	Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3	Orientation = glm::vec3(0.0f, 0.0f, 1.0f);
 		glm::vec3	Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		int		width;

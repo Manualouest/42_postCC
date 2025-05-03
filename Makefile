@@ -22,6 +22,7 @@ SRC = main.cpp\
 		Generation/Perlin.cpp\
 		Generation/ChunkHandler.cpp\
 		Generation/Chunk.cpp
+# ChunkLoader/ChunkLoader.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 
@@ -71,6 +72,7 @@ download_glad:
 	echo "\033[31;1mDownloading it from github\033[0m"; \
 	git clone https://github.com/Dav1dde/glad.git glad; \
 	echo "\033[31;1mCompiling it\033[0m"; \
+	pip install glad; \
 	python -m glad --out-path=glad/build --generator=c; \
 	mkdir -p glad2; \
 	cp glad/build/include/glad/glad.h glad2/.; \

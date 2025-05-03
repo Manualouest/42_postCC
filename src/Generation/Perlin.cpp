@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:44:08 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/02 13:52:34 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/03 15:51:21 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ float	Perlin::computePerlin(const glm::vec2 &pointCoord)
 	// precomputeChunkPerlin({(int)pointCoord.x, (int)pointCoord.y});
 	// // PRINT "coords: " AND pointCoord.x AND ";" AND pointCoord.y AND ", " AND pointCoord.x - (int)pointCoord.x AND ";" AND pointCoord.y - (int)pointCoord.y CENDL;
 	// return (getChunkPerlin({pointCoord.x - (int)pointCoord.x, pointCoord.y - (int)pointCoord.y}));
-	return (sin(pointCoord.x * 0.04f) + sin(pointCoord.y * 0.04f));
+	return ((sin(pointCoord.x * 0.04f) + sin(pointCoord.y * 0.04f) + 2.f) / 4.f * 30.f);
 }
 
 glm::vec2 Perlin::randomGradient(const int &ix, const int &iy)

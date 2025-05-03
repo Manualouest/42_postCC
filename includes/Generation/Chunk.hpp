@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 11:20:55 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/02 18:13:00 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/03 17:19:57 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <Generation/Perlin.hpp>
+#include <Generation/ChunkHandler.hpp>
 #include <Buffers/VBO.hpp>
 #include <Buffers/VAO.hpp>
 #include <Buffers/EBO.hpp>
@@ -24,6 +25,7 @@
 class Chunk
 {
 	public:
+		Chunk();
 		Chunk(const glm::vec2 &newPos);
 		~Chunk();
 
@@ -35,14 +37,18 @@ class Chunk
 		glm::vec2							pos;
 
 	private:
-		char32_t	culling(const char32_t &slice, const bool &dir);
+		char32_t	culling(const char32_t &slice, const bool &dir, const int &edge);
 		void		genMesh(std::vector<float> &vertices, std::vector<int> &indices);
 		void		getRotSlice(std::vector<char32_t> &rotSlice, const int &height);
+		void		makeBuffers();
 
-		VAO				_CVAO;
-		VBO				_CVBO;
-		EBO				_CEBO;
-		int				_indicesSize;
-		unsigned int	_minHeight:8;
-		unsigned int	_maxHeight:8;
+		VAO					_CVAO;
+		VBO					_CVBO;
+		EBO					_CEBO;
+		int					_indicesSize;
+		unsigned int		_minHeight:8;
+		unsigned int		_maxHeight:8;
+		bool				meshMade;
+		std::vector<float>	vertices;
+		std::vector<int>	indices;
 };

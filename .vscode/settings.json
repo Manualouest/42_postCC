@@ -60,6 +60,11 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
 		"variant": "cpp",
-		"bitset": "cpp"
+		"bitset": "cpp",
+		"semaphore": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp",
+		"condition_variable": "cpp",
+		"mutex": "cpp"
 	}
 }
