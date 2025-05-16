@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 11:20:55 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/03 17:19:57 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/09 11:18:08 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <Generation/Perlin.hpp>
-#include <Generation/ChunkHandler.hpp>
 #include <Buffers/VBO.hpp>
 #include <Buffers/VAO.hpp>
 #include <Buffers/EBO.hpp>
@@ -31,6 +30,8 @@ class Chunk
 
 		void		render();
 		void		load();
+		void		unload();
+		void		reload();
 		void		remove();
 
 		std::unordered_map<int, char32_t>	chunkData;
@@ -48,7 +49,8 @@ class Chunk
 		int					_indicesSize;
 		unsigned int		_minHeight:8;
 		unsigned int		_maxHeight:8;
-		bool				meshMade;
+		bool				_meshMade;
+		bool				_unloaded;
 		std::vector<float>	vertices;
 		std::vector<int>	indices;
 };

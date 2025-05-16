@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 12:57:38 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/03 17:19:06 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/09 11:47:58 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ Chunk::Chunk(const glm::vec2 &newPos)
 	_indicesSize = 0;
 	_minHeight = 255;
 	_maxHeight = 0;
+	_meshMade = false;
+	_unloaded = false;
 
 	load();
 	genMesh(vertices, indices);
@@ -34,13 +36,9 @@ Chunk::Chunk(const glm::vec2 &newPos)
 
 }
 
-void		makeBuffers()
+void		Chunk::makeBuffers()
 {
-}
-
-Chunk::~Chunk()
-{
-	_CVAO = VAO();
+	_CVAO = VAO(1);
 	_CVAO.Bind();
 	_CVBO = VBO(vertices.data(), vertices.size() * sizeof(float));
 	_CEBO = EBO((GLuint*)indices.data(), indices.size() * sizeof(GLuint));
@@ -50,18 +48,55 @@ Chunk::~Chunk()
 	_CVAO.Unbind();
 	_CVBO.Unbind();
 	_CEBO.Unbind();
+	_meshMade = true;
+}
+
+Chunk::~Chunk()
+{
 }
 
 void	Chunk::remove()
 {
 	chunkData.clear();
+	if (_meshMade && !_unloaded)
+	{
+		_CVAO.Delete();
+		_CVBO.Delete();
+		_CEBO.Delete();
+	}
+}
+
+void	Chunk::reload()
+{
+	_CVAO = VAO(1);
+	_CVAO.Bind();
+	_CVBO = VBO(vertices.data(), vertices.size() * sizeof(float));
+	_CEBO = EBO((GLuint*)indices.data(), indices.size() * sizeof(GLuint));
+
+	_CVAO.linkAttrib(_CVBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	_CVAO.linkAttrib(_CVBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	_CVAO.Unbind();
+	_CVBO.Unbind();
+	_CEBO.Unbind();
+	_unloaded = false;
+}
+
+void	Chunk::unload()
+{
+	if (!_meshMade || _unloaded)
+		return ;
 	_CVAO.Delete();
 	_CVBO.Delete();
 	_CEBO.Delete();
+	_unloaded = true;
 }
 
 void	Chunk::render()
 {
+	if (!_meshMade)
+		makeBuffers();
+	if (_unloaded)
+		reload();
 	_CVAO.Bind();
 	glDrawElements(GL_TRIANGLES, _indicesSize, GL_UNSIGNED_INT, 0);
 }
@@ -74,7 +109,6 @@ void	Chunk::load()
 	{
 		for (int ii = 0; ii < 32; ++ii)
 		{
-			// std::cout << pos.x + ii << ";" << pos.y + i << ", ";
 			height = Perlin::computePerlin(glm::vec2{pos.x + (31 - ii), pos.y + i});
 			std::unordered_map<int, char32_t>::iterator chunkSlice = chunkData.find(height * 32 + i);
 
@@ -88,9 +122,7 @@ void	Chunk::load()
 			if (height < _minHeight)
 				_minHeight = height;
 		}
-		// std::cout << std::endl;
 	}
-	// std::cout << std::endl;
 
 	for (int i = _maxHeight; i > 0; --i)
 	{
@@ -162,8 +194,8 @@ void	Chunk::genMesh(std::vector<float> &vertices, std::vector<int> &indices)
 		for (int ii = 0; ii < 32; ++ii)
 		{
 			chunkSlice = chunkData.find((i * 32 + ii))->second;
-			// if (!chunkSlice && !rotSlices[ii])
-			// 	continue;
+			if (!chunkSlice && !rotSlices[ii])
+				continue;
 			char32_t westFaces = culling(chunkSlice, true, int(Perlin::computePerlin(glm::vec2{pos.x - 1, pos.y + ii})) >= i);
 			char32_t eastFaces = culling(chunkSlice, false, int(Perlin::computePerlin(glm::vec2{pos.x + 32, pos.y + ii})) >= i);
 			char32_t northFaces = culling(rotSlices[ii], true, int(Perlin::computePerlin(glm::vec2{pos.x + (31 - ii), pos.y + 32})) >= i);
@@ -179,25 +211,12 @@ void	Chunk::genMesh(std::vector<float> &vertices, std::vector<int> &indices)
 					addVertices(vertices, indices, {1 + pos.x + (31 - ii), 1 + i, 1 + pos.y + (31 - iii)}, {0 + pos.x + (31 - ii), 1 + i, 1 + pos.y + (31 - iii)}, {1 + pos.x + (31 - ii), 0 + i, 1 + pos.y + (31 - iii)}, {0 + pos.x + (31 - ii), 0 + i, 1 + pos.y + (31 - iii)});
 				if ((southFaces >> iii) & 1)
 					addVertices(vertices, indices, {0 + pos.x + (31 - ii), 1 + i, 0 + pos.y + (31 - iii)}, {1 + pos.x + (31 - ii), 1 + i, 0 + pos.y + (31 - iii)}, {0 + pos.x + (31 - ii), 0 + i, 0 + pos.y + (31 - iii)}, {1 + pos.x + (31 - ii), 0 + i, 0 + pos.y + (31 - iii)});
-			
 				if ((chunkSlice >> iii) & 1 && 
 					(chunkData.find(((i + 1) * 32 + ii)) != chunkData.end() && !((chunkData.find(((i + 1) * 32 + ii))->second >> iii) & 1)
 						|| chunkData.find(((i + 1) * 32 + ii)) == chunkData.end()))
 					addVertices(vertices, indices, {0 + pos.x + iii, 1 + i, 1 + pos.y + ii}, {1 + pos.x + iii, 1 + i, 1 + pos.y + ii}, {0 + pos.x + iii, 1 + i, 0 + pos.y + ii}, {1 + pos.x + iii, 1 + i, 0 + pos.y + ii});
-				
 			}
 		}
 	}
-	// if (_minHeight == _maxHeight)
-	// {
-	// 	std::cout << "empty chunk pos: " << pos.x << "; " << pos.y << std::endl;
-	// 	for (int i = 0; i < 32; ++i)
-	// 	{
-	// 		for (int ii = 0; ii < 32; ++ii)
-	// 		{
-	// 			addVertices(vertices, indices, {0 + pos.x + ii, 10, 1 + pos.y + i}, {1 + pos.x + ii, 10, 1 + pos.y + i}, {0 + pos.x + ii, 10, 0 + pos.y + i}, {1 + pos.x + ii, 10, 0 + pos.y + i});
-	// 		}
-	// 	}
-	// }
 }
 

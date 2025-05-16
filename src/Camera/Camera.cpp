@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:31:35 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/03 15:25:11 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/05 09:16:12 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 position)
 	lockCursor = -2;
 }
 
-void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform, int nWidth, int nHeight)
+void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform, float nWidth, float nHeight)
 {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -26,7 +26,7 @@ void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shade
 	width = nWidth;
 	height = nHeight;
 	view = glm::lookAt(Position, Position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOVdeg), (float)(width / height), nearPlane, farPlane);
+	projection = glm::perspective(glm::radians(FOVdeg), width / height, nearPlane, farPlane);
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 

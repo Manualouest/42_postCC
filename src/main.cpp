@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:20:14 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/03 17:01:37 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/05/09 11:16:34 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,63 +58,6 @@ int	main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// glm::vec3 instanceIndex[] =
-	// {
-	// 	glm::vec3{1, 2, 0},
-	// 	glm::vec3{0, 4, 1},
-	// 	glm::vec3{2, 6, 0},
-	// 	glm::vec3{0, 8, 2}
-	// };
-	
-	// GLfloat	vertices_Base[] =
-	// {
-	// 	-0.5f,	0.0f,	0.5f,	1.0f,	0.0f,	0.0f,	0.0f, 0.0f,
-	// 	-0.5f,	0.0f,	-0.5f,	0.0f,	1.0f,	0.0f,	1.0f, 0.0f,
-	// 	0.5f,	0.0f,	-0.5f,	0.0f,	0.0f,	1.0f,	0.0f, 0.0f,
-	// 	0.5f,	0.0f,	0.5f,	1.0f,	1.0f,	1.0f,	1.0f, 0.0f,
-	// 	0.0f,	2.0f,	0.0f,	1.0f,	1.0f,	1.0f,	0.5f, 1.0f
-	// };
-
-	// GLfloat	vertices[40 * 10000]; // 10000 elements of size 40(vertices_Base)
-
-	// for (int i = 0; i < 100; ++i)
-	// {
-	// 	for (int j = 0; j < 100; ++j)
-	// 	{
-	// 		for (int n = 0; n < 40; ++n) // 40 cause vertices_Base has 40 things
-	// 			vertices[(i * 100 + j) * 40 + n] = vertices_Base[n];
-	// 		vertices[(i * 100 + j) * 40] += 1.0f * j;
-	// 		vertices[(i * 100 + j) * 40 + 8] += 1.0f * j;
-	// 		vertices[(i * 100 + j) * 40 + 16] += 1.0f * j;
-	// 		vertices[(i * 100 + j) * 40 + 24] += 1.0f * j;
-	// 		vertices[(i * 100 + j) * 40 + 32] += 1.0f * j;
-
-	// 		vertices[(i * 100 + j) * 40 + 2] += 1.0f * i;
-	// 		vertices[(i * 100 + j) * 40 + 10] += 1.0f * i;
-	// 		vertices[(i * 100 + j) * 40 + 18] += 1.0f * i;
-	// 		vertices[(i * 100 + j) * 40 + 26] += 1.0f * i;
-	// 		vertices[(i * 100 + j) * 40 + 34] += 1.0f * i;
-	// 	}
-	// }
-
-	// GLuint indices_Base[] =
-	// {
-	// 	0, 2, 1,
-	// 	0, 2, 3,
-	// 	0, 1, 4,
-	// 	1, 2, 4,
-	// 	2, 3, 4,
-	// 	3, 0, 4
-	// };
-
-	// GLuint	indices[18 * 10000]; // 10000 elemets of size 18 (size of indices_Base)
-
-	// for (int i = 0; i < 10000; ++i)
-	// {
-	// 	for (int j = 0; j < 18; ++j) // 18 for size of indices_Base
-	// 		indices[i * 18 + j] = indices_Base[j] + 5 * i;
-	// }
-
 	GLFWwindow	*window = glfwCreateWindow(width, height, "ft_vox", NULL, NULL);
 	if (!window)
 	{
@@ -151,7 +94,7 @@ int	main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 
-	Camera camera(glm::vec3(0.0f, 100.0f, -20.0f));
+	Camera camera(glm::vec3(0.0f, 100.0f, 0.0f));
 
 	GLuint uniID = glGetUniformLocation(shader.ID, "indexs");
 
@@ -223,7 +166,7 @@ int	main()
 		// VAO1.Bind();
 		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 		
-		chunkHandler.UpdateChunks(camera.Position, camera.Orientation);
+		chunkHandler.UpdateChunks(camera.Position, camera.Orientation, window);
 		chunkHandler.RenderChunks();
 		
 		

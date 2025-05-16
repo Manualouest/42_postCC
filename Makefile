@@ -1,6 +1,6 @@
 NAME = ft_vox
 
-CFLAGS = -g
+CFLAGS = -g -MP -MMD
 
 GLFW_PATH = libs/glfw
 GLAD_PATH = libs/glad
@@ -21,10 +21,11 @@ SRC = main.cpp\
 		Camera/Camera.cpp\
 		Generation/Perlin.cpp\
 		Generation/ChunkHandler.cpp\
-		Generation/Chunk.cpp
-# ChunkLoader/ChunkLoader.cpp
+		Generation/Chunk.cpp\
+		ChunkLoader/ChunkLoader.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
+DEPS = $(addprefix obj/, $(SRC:.cpp=.d))
 
 all: glfw glad glm $(NAME)
 
@@ -135,3 +136,5 @@ fclean: clean
 re: fclean all
 
 .PHONY: all glfw glad glm clean fclean re cleanlibs
+
+-include $(DEPS)%
