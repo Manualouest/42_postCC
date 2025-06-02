@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Texture.hpp                                        :+:      :+:    :+:   */
+/*   Window.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/12 21:10:34 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 16:56:04 by mbirou           ###   ########.fr       */
+/*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
+/*   Updated: 2025/06/01 16:26:02 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-// #define STB_IMAGE_IMPLEMENTATION
-// #include <stb/stb_image.h>
+#include <Buffers/VAO.hpp>
+#include <Buffers/EBO.hpp>
+#include <Texture/Texture.hpp>
+#include <Camera/Camera.hpp>
 
-#include <Shaders/Shaders.hpp>
-
-class Texture
+class Window
 {
 	public:
-		GLuint	ID;
-		GLenum	type;
-		Texture(const char *image, GLenum textType, GLenum slot, GLenum format, GLenum pixelType);
+		Window();
+		~Window();
+
+		GLFWwindow *getContext() const;
 	
-		void	texUnit(Shader &shader, const char *uniform, GLuint unit);
-		void	Bind();
-		void	Unbind();
-		void	Delete();
+	private:
+		GLFWwindow *_window;
 };

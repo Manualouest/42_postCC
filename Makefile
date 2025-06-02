@@ -1,4 +1,4 @@
-NAME = ft_vox
+NAME = ft_scop
 
 CFLAGS = -g -MP -MMD
 
@@ -19,10 +19,7 @@ SRC = main.cpp\
 		Buffers/EBO.cpp\
 		Texture/Texture.cpp\
 		Camera/Camera.cpp\
-		Generation/Perlin.cpp\
-		Generation/ChunkHandler.cpp\
-		Generation/Chunk.cpp\
-		ChunkLoader/ChunkLoader.cpp
+		Window/Window.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))

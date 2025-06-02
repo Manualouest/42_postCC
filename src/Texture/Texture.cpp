@@ -6,9 +6,12 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 21:17:26 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/12 21:50:16 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/06/01 16:56:22 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h> 
 
 #include <Texture/Texture.hpp>
 
