@@ -1,35 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Window.hpp                                         :+:      :+:    :+:   */
+/*   ObjectLoader.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/02 12:48:23 by mbirou           ###   ########.fr       */
+/*   Created: 2025/06/02 12:40:56 by mbirou            #+#    #+#             */
+/*   Updated: 2025/06/02 12:44:10 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <ObjectHandler/Object.hpp>
 
-// #include <Buffers/VAO.hpp>
-// #include <Buffers/EBO.hpp>
-// #include <Texture/Texture.hpp>
-#include <ObjectHandler/ObjectLoader.hpp>
-#include <Camera/Camera.hpp>
-
-class Window
+class ObjectLoader
 {
 	public:
-		Window();
-		~Window();
-
-		GLFWwindow	*getContext() const;
-		float		startRenderLoop();
-		void		endRenderLoop();
-
+		static Object loadObject(const std::string &filename);
+	
 	private:
-		GLFWwindow	*_window;
-		float		_deltaTime;
-		double		_oldTime;
+		ObjectLoader();
+		~ObjectLoader();
 };

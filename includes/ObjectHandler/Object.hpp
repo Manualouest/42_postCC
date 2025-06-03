@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Window.hpp                                         :+:      :+:    :+:   */
+/*   Object.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/02 12:48:23 by mbirou           ###   ########.fr       */
+/*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
+/*   Updated: 2025/06/03 11:19:44 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <includes.hpp>
+#include <Buffers/VAO.hpp>
+#include <Buffers/EBO.hpp>
+#include <Texture/Texture.hpp>
 
-// #include <Buffers/VAO.hpp>
-// #include <Buffers/EBO.hpp>
-// #include <Texture/Texture.hpp>
-#include <ObjectHandler/ObjectLoader.hpp>
-#include <Camera/Camera.hpp>
-
-class Window
+class Object
 {
 	public:
-		Window();
-		~Window();
+		Object(VAO &VAO, std::vector<VBO> &VBO, std::vector<EBO> &EBO, const std::vector<float> &indices);
+		~Object();
 
-		GLFWwindow	*getContext() const;
-		float		startRenderLoop();
-		void		endRenderLoop();
+		void	Render();
 
 	private:
-		GLFWwindow	*_window;
-		float		_deltaTime;
-		double		_oldTime;
+		VAO					_VAO;
+		std::vector<VBO>	_VBO;
+		std::vector<EBO> 	_EBO;
+		std::vector<float>	_indices;
 };

@@ -19,7 +19,9 @@ SRC = main.cpp\
 		Buffers/EBO.cpp\
 		Texture/Texture.cpp\
 		Camera/Camera.cpp\
-		Window/Window.cpp
+		Window/Window.cpp\
+		ObjectHandler/ObjectLoader.cpp\
+		ObjectHandler/Object.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))

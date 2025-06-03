@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 16:28:56 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/06/02 11:10:52 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,18 @@ Window::Window()
 		glfwTerminate();
 		exit (0);
 	}
-	
 	glfwMakeContextCurrent(_window);
 	gladLoadGL();
 	glViewport(0, 0, WWIDTH, WHEIGHT);
-
 	glfwSetInputMode(_window, GLFW_STICKY_KEYS, GLFW_TRUE);
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 
 	glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	_deltaTime = 0.016666667;
 }
 
 Window::~Window()
@@ -58,4 +57,23 @@ Window::~Window()
 GLFWwindow *Window::getContext() const
 {
 	return (_window);
+}
+
+float	Window::startRenderLoop()
+{
+	_oldTime = glfwGetTime();
+	glfwPollEvents();
+	glClearColor(0.17f, 0.13f, 0.07f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	return _deltaTime;
+}
+
+void	Window::endRenderLoop()
+{
+	glfwSwapBuffers(_window);
+	_deltaTime = glfwGetTime() - _oldTime;
+	std::stringstream	fps;
+	fps << "fps: ";
+	fps << (1 / _deltaTime);
+	glfwSetWindowTitle(_window, fps.str().c_str());
 }
