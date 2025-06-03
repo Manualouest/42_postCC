@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ObjectLoader.hpp                                   :+:      :+:    :+:   */
+/*   window.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 12:40:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/03 14:47:12 by mbirou           ###   ########.fr       */
+/*   Created: 2025/05/30 13:23:33 by mbirou            #+#    #+#             */
+/*   Updated: 2025/05/30 15:57:03 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ObjectHandler/Object.hpp>
+#include <includes.hpp>
+#include <spellBook.hpp>
 
-class ObjectLoader
+class	Window
 {
 	public:
-		static Object loadObject(const std::string &filename);
+		Window();
+		~Window();
 	
-	private:
-		ObjectLoader();
-		~ObjectLoader();
-
-		static void	addVertexInfo(const std::string &line);
-		static void	addIndiceInfo(const std::string &line);
-
-		static std::map<std::string, std::vector<float> >	vertexInfo;
-		static std::map<std::string, std::vector<float> >	indices;
+		void	addVertices(std::vector<float> vertices, std::vector<int> indices);
 };

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:50:48 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 16:53:24 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/06/03 18:45:19 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <map>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <cerrno>
+#include <fstream>
 
 #include <glad/glad.h>
 
