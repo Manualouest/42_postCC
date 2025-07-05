@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:50:48 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/03 18:45:19 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/05 16:50:17 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,15 @@
 #include <spellBook.hpp>
 
 #include <iostream>
+#include <algorithm>
 #include <cmath>
 #include <vector>
 #include <map>
+#include <istream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <cerrno>
-#include <fstream>
 
 #include <glad/glad.h>
 

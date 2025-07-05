@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 16:29:15 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/02 11:19:40 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/05 19:06:44 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,38 +31,38 @@ int main(int argc, char **argv)
 
 
 
-	GLfloat	vertices[] =
-	{
-		-0.5f,	0.0f,	0.5f,	0.0f, 0.0f,
-		-0.5f,	0.0f,	-0.5f,	1.0f, 0.0f,
-		0.5f,	0.0f,	-0.5f,	0.0f, 0.0f,
-		0.5f,	0.0f,	0.5f,	1.0f, 0.0f,
-		0.0f,	0.8f,	0.0f,	0.5f, 1.0f
-	};
+	// GLfloat	vertices[] =
+	// {
+	// 	-0.5f,	0.0f,	0.5f,	0.0f, 0.0f,
+	// 	-0.5f,	0.0f,	-0.5f,	1.0f, 0.0f,
+	// 	0.5f,	0.0f,	-0.5f,	0.0f, 0.0f,
+	// 	0.5f,	0.0f,	0.5f,	1.0f, 0.0f,
+	// 	0.0f,	0.8f,	0.0f,	0.5f, 1.0f
+	// };
 
-	GLuint indices[] =
-	{
-		0, 2, 1,
-		0, 2, 3,
-		0, 1, 4,
-		1, 2, 4,
-		2, 3, 4,
-		3, 0, 4
-	};
+	// GLuint indices[] =
+	// {
+	// 	0, 2, 1,
+	// 	0, 2, 3,
+	// 	0, 1, 4,
+	// 	1, 2, 4,
+	// 	2, 3, 4,
+	// 	3, 0, 4
+	// };
 
-	VAO VAO1(1);
-	VAO1.Bind();
+	// VAO VAO1(1);
+	// VAO1.Bind();
 
-	VBO	VBO1(vertices, sizeof(vertices));
-	EBO	EBO1(indices, sizeof(indices));
+	// VBO	VBO1(vertices, sizeof(vertices));
+	// EBO	EBO1(indices, sizeof(indices));
 
-	VAO1.linkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-	VAO1.linkAttrib(VBO1, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();
+	// VAO1.linkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	// VAO1.linkAttrib(VBO1, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	// VAO1.Unbind();
+	// VBO1.Unbind();
+	// EBO1.Unbind();
 
-
+	Object test = ObjectLoader::loadObject(argv[1]);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -78,9 +78,9 @@ int main(int argc, char **argv)
 		cat.Bind();
 
 
-
-		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		test.Render();
+		// VAO1.Bind();
+		// glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
 
 

@@ -6,9 +6,11 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/03 11:19:44 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/05 19:06:16 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include <includes.hpp>
 #include <Buffers/VAO.hpp>
@@ -18,14 +20,14 @@
 class Object
 {
 	public:
-		Object(VAO &VAO, std::vector<VBO> &VBO, std::vector<EBO> &EBO, const std::vector<float> &indices);
+		Object(VAO &VAO, VBO &VBO, const std::vector<float> &vertices);
 		~Object();
 
 		void	Render();
 
 	private:
 		VAO					_VAO;
-		std::vector<VBO>	_VBO;
-		std::vector<EBO> 	_EBO;
-		std::vector<float>	_indices;
+		VBO					_VBO;
+		// EBO					_EBO;
+		std::vector<float>	_vertices;
 };
