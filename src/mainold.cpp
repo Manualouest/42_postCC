@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:20:14 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 16:34:59 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/06 13:15:20 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,19 +149,8 @@ int	main()
 		camera.Inputs(window);
 		camera.Matrix(45.0f, 0.1f, 10000.0f, shader, "camMatrix", width, height);
 		shader.Activate();
-		
-		// glUniform3fv(uniID, 4, reinterpret_cast<GLfloat*>(instanceIndex));
 
 		cat.Bind();
-		// VAO1.Bind();
-		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		
-		// chunkHandler.UpdateChunks(camera.Position, camera.Orientation, window);
-		// chunkHandler.RenderChunks();
-		
-		
-		
-		// glDrawElementsInstanced(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0, 400);
 
 		glfwSwapBuffers(window);
 		
@@ -182,11 +171,6 @@ int	main()
 		}
 
 	}
-
-
-	// VAO1.Delete();
-	// VBO1.Delete();
-	// EBO1.Delete();
 	shader.Delete();
 	cat.Delete();
 

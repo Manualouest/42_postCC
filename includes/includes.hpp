@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:50:48 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/05 16:50:17 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/06 15:30:17 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <spellBook.hpp>
+#include <maths.hpp>
 
 #include <iostream>
 #include <algorithm>

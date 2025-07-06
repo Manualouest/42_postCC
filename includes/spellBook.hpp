@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   spellBook.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbirou <manutea.birou@gmail.com>           +#+  +:+       +#+        */
+/*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 15:45:45 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/17 08:22:33 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/06 10:52:09 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@
 # define DSTR RGB(200, 200, 0)
 
 # define PRINT std::cout <<
+# define PRERR std::cerr <<
 # define AND <<
 # define ENDL << std::endl
 # define CENDL AND CLR ENDL
 # define TAB "\t"
-# define NEWL PRINT CLR ENDL;
+# define NEWL PRINT "" ENDL;

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 21:10:34 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 16:56:04 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/06 14:28:41 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,15 @@ class Texture
 	public:
 		GLuint	ID;
 		GLenum	type;
-		Texture(const char *image, GLenum textType, GLenum slot, GLenum format, GLenum pixelType);
+		Texture(const char *path);
 	
 		void	texUnit(Shader &shader, const char *uniform, GLuint unit);
+		void	LoadImage(const char *path);
 		void	Bind();
 		void	Unbind();
 		void	Delete();
+
+		int							width;
+		int							height;
+		std::vector<unsigned char>	data;
 };
