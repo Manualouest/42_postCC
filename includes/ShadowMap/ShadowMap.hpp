@@ -1,36 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Texture.hpp                                        :+:      :+:    :+:   */
+/*   ShadowMap.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/12 21:10:34 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 19:36:41 by mbirou           ###   ########.fr       */
+/*   Created: 2025/07/07 15:23:45 by mbirou            #+#    #+#             */
+/*   Updated: 2025/07/07 20:37:46 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-// #define STB_IMAGE_IMPLEMENTATION
-// #include <stb/stb_image.h>
-
+#include <includes.hpp>
 #include <Shaders/Shaders.hpp>
+#include <ObjectHandler/Object.hpp>
 
-class Texture
+class ShadowMap
 {
 	public:
-		GLuint	ID;
-		GLenum	type;
-		Texture(const char *path);
-	
-		void	texUnit(Shader &shader, const char *uniform, GLuint unit);
-		void	LoadImage(const char *path);
-		void	Bind(Shader shader);
-		void	Unbind();
-		void	Delete();
+		ShadowMap();
+		~ShadowMap();
 
-		int							width;
-		int							height;
-		std::vector<unsigned char>	data;
+		void	getShadows(glm::mat4 lightProj, Object &object);
+		void	sendToShader(Shader shader);
+	
+		Shader	shader;
+
+	private:
+		unsigned int	_FBO;
+		unsigned int	_width = 2048;
+		unsigned int	_height = 2048;
+		unsigned int	_shadowMap;
 };

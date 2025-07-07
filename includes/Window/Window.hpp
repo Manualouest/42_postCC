@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 13:12:54 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 16:00:05 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 // #include <Texture/Texture.hpp>
 #include <ObjectHandler/ObjectLoader.hpp>
 #include <Camera/Camera.hpp>
+#include <ShadowMap/ShadowMap.hpp>
 
 class Window
 {

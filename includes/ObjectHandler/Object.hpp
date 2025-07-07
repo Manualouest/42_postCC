@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 13:26:58 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 19:21:15 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,13 @@ class Object
 		void	Render(Shader &shader);
 		void	movement(GLFWwindow *window);
 
+		v3	center = {0, 0, 0};
+
 	private:
 		VAO					_VAO;
 		VBO					_VBO;
 		// EBO					_EBO;
 		std::vector<float>	_vertices;
-		v3					_center = {0, 0, 0};
 		glm::mat4			_modelMatrix = glm::mat4(1.0f);
 		float				_angle = 0;
 		int					_nbFaces;

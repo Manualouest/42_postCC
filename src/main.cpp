@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 16:29:15 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 08:16:55 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 20:42:54 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ int main(int argc, char **argv)
 
 	float width, height;
 
-	Object test = ObjectLoader::loadObject(argv[1]);
+	Object object = ObjectLoader::loadObject(argv[1]);
+
+	ShadowMap shadowMap;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -44,13 +46,30 @@ int main(int argc, char **argv)
 			glfwSetWindowShouldClose(window, true);
 
 		camera.Inputs(window);
-		camera.Matrix(45.0f, 0.1f, 10000.0f, shader, Window::width, Window::height);
+		camera.Matrix(45.0f, 0.1f, 500.0f, shader, Window::width, Window::height);
+
+		glm::mat4	orthogonalProj = glm::ortho(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);
+		glm::mat4	lightView = glm::lookAt(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(object.center.x, object.center.y, object.center.z), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4	lightProj = orthogonalProj * lightView;
+
+		object.movement(WindowManager.getContext());
+		
+		glEnable(GL_DEPTH_TEST);
+
+		shadowMap.getShadows(lightProj, object);
+
+		glViewport(0, 0, Window::width, Window::height);
+
+		cat.Bind(shader);
 		shader.Activate();
 
-		cat.Bind();
+		shadowMap.sendToShader(shader);
 
-		test.movement(WindowManager.getContext());
-		test.Render(shader);
+		glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uLightProjection"), 1, GL_FALSE, glm::value_ptr(lightProj));
+
+		object.Render(shader);
+
+		glDisable(GL_DEPTH_TEST);
 
 
 		WindowManager.endRenderLoop();

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 13:13:19 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 15:55:25 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ Window::Window()
 	gladLoadGL();
 	glViewport(0, 0, width, height);
 	glfwSetInputMode(_window, GLFW_STICKY_KEYS, GLFW_TRUE);
-	glEnable(GL_DEPTH_TEST);
 	// glEnable(GL_CULL_FACE);
 	// glCullFace(GL_FRONT);
 

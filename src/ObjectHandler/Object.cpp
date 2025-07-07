@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 13:42:33 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 19:21:15 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void	Object::movement(GLFWwindow *window)
 	else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
 		move.x = -1;
 
-	_center = _center + move;
-	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(_center.x, _center.y, _center.z));
+	center = center + move;
+	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(center.x, center.y, center.z));
 	_angle += 0.01;
 	// _modelMatrix = glm::rotate(_modelMatrix, _angle, glm::vec3(0, 1, 0));
 }

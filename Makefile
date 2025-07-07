@@ -21,7 +21,8 @@ SRC = main.cpp\
 		Camera/Camera.cpp\
 		Window/Window.cpp\
 		ObjectHandler/ObjectLoader.cpp\
-		ObjectHandler/Object.cpp
+		ObjectHandler/Object.cpp\
+		ShadowMap/ShadowMap.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 21:17:26 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 15:24:46 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 19:37:23 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,11 @@ Texture::Texture(const char *textPath)
 // 	glUniform1i(texUni, unit);
 // }
 
-void	Texture::Bind()
+void	Texture::Bind(Shader shader)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, ID);
+	glUniform1i(glGetUniformLocation(shader.ID, "uText"), 0);
 }
 
 void	Texture::Unbind()
