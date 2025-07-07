@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:40:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/05 19:06:20 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:25:20 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,5 @@ class ObjectLoader
 		static std::map<std::string, std::vector<float> >	_vertexInfo;
 		static struct info {float a; float b; float c;}		_info;
 		static std::vector<std::string>						_infoTypes;
+		static int											_nbFaces;
 };

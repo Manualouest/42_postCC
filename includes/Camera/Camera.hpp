@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:25:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 14:36:17 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:15:08 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Camera
 		int		lockCursor : 2;
 
 		Camera(glm::vec3 position);
-		void	Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform, float nWidth, float nHeight);
+		void	Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, float nWidth, float nHeight);
 		void	Inputs(GLFWwindow *window);
+		void	moveInputs(GLFWwindow *window);
 };

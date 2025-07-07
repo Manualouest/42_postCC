@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 16:14:14 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:26:58 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 class Object
 {
 	public:
-		Object(VAO &VAO, VBO &VBO, const std::vector<float> &vertices);
+		Object(VAO &VAO, VBO &VBO, const std::vector<float> &vertices, int nbFaces);
 		~Object();
 
 		void	Render(Shader &shader);
@@ -34,4 +34,5 @@ class Object
 		v3					_center = {0, 0, 0};
 		glm::mat4			_modelMatrix = glm::mat4(1.0f);
 		float				_angle = 0;
+		int					_nbFaces;
 };

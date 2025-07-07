@@ -6,15 +6,16 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:40:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 13:55:44 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:26:49 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ObjectHandler/ObjectLoader.hpp>
 
 std::map<std::string, std::vector<float> >	ObjectLoader::_vertexInfo;
-ObjectLoader::info							ObjectLoader::_info;
+ObjectLoader::info							ObjectLoader::_info = {0, 0, 0};
 std::vector<std::string>					ObjectLoader::_infoTypes = {"v ", "vt", "vn", "f "};
+int											ObjectLoader::_nbFaces = 0;
 
 void	ObjectLoader::presetVectors(const std::string &filename)
 {
@@ -117,7 +118,7 @@ Object	ObjectLoader::createObject()
 	_VAO.linkAttrib(_VBO, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 	_VAO.Unbind();
 	_VBO.Unbind();
-	return (Object(_VAO, _VBO, _vertexInfo["f "]));
+	return (Object(_VAO, _VBO, _vertexInfo["f "], _nbFaces));
 }
 
 void	makeNormals(std::vector<float> &values, bool isquad)
@@ -249,11 +250,13 @@ std::vector<float> ObjectLoader::getInfo(std::string line)
 			makeNormals(values, true);
 		if (values[3] == -2 || values[11] == -2 || values[19] == -2 || values[27] == -2)
 			makeUV(values, true);
+		_nbFaces ++;
 	}
 	if (values[5] == -2 || values[13] == -2 || values[21] == -2)
 		makeNormals(values, false);
 	if (values[3] == -2 || values[11] == -2 || values[19] == -2)
 		makeUV(values, false);
+	_nbFaces ++;
 	stream.clear();
 	return (values);
 }
@@ -267,6 +270,8 @@ Object ObjectLoader::loadObject(const std::string &filename)
 	// if (filename.find_last_of(".obj") != filename.length() - 4)
 	// 	throw(std::invalid_argument(filename + " is not a .obj >:["));
 	_vertexInfo.clear();
+	_nbFaces = 0;
+	_info = {0, 0, 0};
 	// presetVectors(filename);
 	file.open(filename.c_str(), std::ifstream::in);
 	if (file.fail())

@@ -6,13 +6,13 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 16:15:27 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:42:33 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ObjectHandler/Object.hpp>
 
-Object::Object(VAO &VAO, VBO &VBO, const std::vector<float> &vertices) : _VAO(VAO), _VBO(VBO), _vertices(vertices)
+Object::Object(VAO &VAO, VBO &VBO, const std::vector<float> &vertices, int nbFaces) : _VAO(VAO), _VBO(VBO), _vertices(vertices), _nbFaces(nbFaces)
 {
 	v3	min = {0, 0, 0};
 	v3	max = {0, 0, 0};
@@ -44,7 +44,8 @@ Object::~Object()
 
 void	Object::Render(Shader &shader)
 {
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(_modelMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uModelMatrix"), 1, GL_FALSE, glm::value_ptr(_modelMatrix));
+	glUniform1i(glGetUniformLocation(shader.ID, "uNbFaces"), _nbFaces / 3);
 	_VAO.Bind();
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 }
@@ -72,5 +73,5 @@ void	Object::movement(GLFWwindow *window)
 	_center = _center + move;
 	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(_center.x, _center.y, _center.z));
 	_angle += 0.01;
-	_modelMatrix = glm::rotate(_modelMatrix, _angle, glm::vec3(0, 1, 0));
+	// _modelMatrix = glm::rotate(_modelMatrix, _angle, glm::vec3(0, 1, 0));
 }

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 13:41:05 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:13:19 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ float	Window::startRenderLoop()
 	glfwPollEvents();
 	glClearColor(0.17f, 0.13f, 0.07f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	return _deltaTime;
 }
 

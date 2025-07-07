@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:31:35 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 13:13:29 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/07 13:15:37 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 position)
 	lockCursor = -2;
 }
 
-void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, const char *uniform, float nWidth, float nHeight)
+void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, float nWidth, float nHeight)
 {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -27,10 +27,10 @@ void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shade
 	height = nHeight;
 	view = glm::lookAt(Position, Position + Orientation, Up);
 	projection = glm::perspective(glm::radians(FOVdeg), width / height, nearPlane, farPlane);
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uCamMatrix"), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
-void	Camera::Inputs(GLFWwindow *window)
+void	Camera::moveInputs(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
@@ -66,10 +66,13 @@ void	Camera::Inputs(GLFWwindow *window)
 	{
 		speed = 0.1f;
 	}
+}
 
+void	Camera::Inputs(GLFWwindow *window)
+{
+	moveInputs(window);
 	if ((lockCursor & 2) && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
-		
 		if ((lockCursor & 1))
 		{
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
