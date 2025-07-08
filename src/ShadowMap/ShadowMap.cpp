@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:31:02 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 20:37:47 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/08 21:05:12 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,29 +34,34 @@ ShadowMap::ShadowMap() : shader(Shader("shaders/shadowMap.vert", "shaders/shadow
 
 ShadowMap::~ShadowMap()
 {
-
+	glDeleteFramebuffers(1, &_FBO);
+	glDeleteTextures(1, &_shadowMap);
 }
 
 void	ShadowMap::sendToShader(Shader shader)
 {
-	glActiveTexture(GL_TEXTURE0 + 1);
+	glActiveTexture(GL_TEXTURE0 + 2);
 	glBindTexture(GL_TEXTURE_2D, _shadowMap);
-	glUniform1i(glGetUniformLocation(shader.ID, "uShadow"), 1);
+	glUniform1i(glGetUniformLocation(shader.ID, "uShadow"), 2);
 }
 
-void	ShadowMap::getShadows(glm::mat4 lightProj, Object &object)
+void	ShadowMap::startShadowGen(glm::mat4 lightProj)
 {
-	
 	shader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uLightProjection"), 1, GL_FALSE, glm::value_ptr(lightProj));
 
 	glViewport(0, 0, _width, _height);
 	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
+}
 
+void	ShadowMap::renderShadows(Object &object)
+{
 	object.Render(shader);
+}
 
+void	ShadowMap::endShadowGen()
+{
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glClear(GL_DEPTH_BUFFER_BIT);
 }

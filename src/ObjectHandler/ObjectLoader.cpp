@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:40:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 21:02:28 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/08 20:36:54 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,61 +53,8 @@ void	ObjectLoader::presetVectors(const std::string &filename)
 
 Object	ObjectLoader::createObject()
 {
-
+	_vertexInfo["f "].shrink_to_fit();
 	int i = 0;
-	// for (std::vector<float>::iterator it = _vertexInfo["v "].begin(); it != _vertexInfo["v "].end(); ++it)
-	// {
-	// 	if (i == 3)
-	// 	{
-	// 		NEWL;
-	// 		i = 0;
-	// 	}
-	// 	PRINT *it << "; ";
-	// 	++i;
-	// }
-	// NEWL;
-	// NEWL;
-	// PRINT "NOW VT:" ENDL;
-	// i = 0;
-	// for (std::vector<float>::iterator it = _vertexInfo["vt"].begin(); it != _vertexInfo["vt"].end(); ++it)
-	// {
-	// 	if (i == 2)
-	// 	{
-	// 		NEWL;
-	// 		i = 0;
-	// 	}
-	// 	PRINT *it << "; ";
-	// 	++i;
-	// }
-	// NEWL;
-	// NEWL;
-	// PRINT "NOW VN:" ENDL;
-	// i = 0;
-	// for (std::vector<float>::iterator it = _vertexInfo["vn"].begin(); it != _vertexInfo["vn"].end(); ++it)
-	// {
-	// 	if (i == 3)
-	// 	{
-	// 		NEWL;
-	// 		i = 0;
-	// 	}
-	// 	PRINT *it << "; ";
-	// 	++i;
-	// }
-	// NEWL;
-	// NEWL;
-	// PRINT "NOW F:" ENDL;
-
-	// i = 0;
-	// for (std::vector<float>::iterator it = _vertexInfo["f "].begin(); it != _vertexInfo["f "].end(); ++it)
-	// {
-	// 	if (i == 8)
-	// 	{
-	// 		NEWL;
-	// 		i = 0;
-	// 	}
-	// 	PRINT *it << "; ";
-	// 	++i;
-	// }
 
 	VAO	_VAO = VAO(1);
 	_VAO.Bind();

@@ -9,41 +9,64 @@ in vec3 FragPos;
 in vec4 FragPosLight;
 in float totalVertexes;
 in vec4 clipSpace;
+in vec3 position;
+flat in int switchText;
+flat in int switchType;
+flat in float switchTextMix;
+flat in float switchTypeMix;
 
-uniform sampler2D uText;
+uniform sampler2D uText0;
+uniform sampler2D uText1;
+uniform float uTextMix;
+uniform float uTypeMix;
 uniform sampler2D uShadow;
 uniform int uNbFaces;
-
-vec3 lightColor = vec3(1, 1, 1);
-vec3 lightPos = FragPosLight.xyz;
+uniform bool uLight;
+uniform bool uShadows;
+uniform bool uTorch;
+uniform vec3 uLightPos;
+uniform mat4 uModelMatrix;
+uniform mat4 uCamMatrix;
+uniform vec3 uLightColor;
 
 void main()
 {
 	vec2 pos = clipSpace.xy / clipSpace.w;
 	pos = pos / 2 + 0.5;
 
-	//AMBIENT
-	float ambientStrength = 0.1;
-	vec3 ambient = ambientStrength * lightColor;
+	vec3 result = vec3(0);
 
+	vec3 ambient = vec3(0);
+	vec3 diffuse = vec3(0);
+	if (uLight)
+	{
+		//AMBIENT
+		float ambientStrength = 0.1;
+		ambient = ambientStrength * vec3(1.0f);
+		result += ambient;
 
-	//DIFFUSE
-	vec3 norm = normalize(Normal);
-	vec3 lightDir = normalize(lightPos - FragPos);
-	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor;
+		//DIFFUSE
+		vec3 norm = normalize(Normal);
+		vec3 lightDir = normalize(uLightPos - FragPos);
+		float diff = max(dot(norm, lightDir), 0.0);
+		diffuse = diff * uLightColor;
+		if (!uShadows)
+			result += diffuse;
+	}
 
 
 	//TORCH
-	vec3 torch = vec3(clamp(1 - (pow(pos.x - 0.5, 2) + pow(pos.y - 0.5, 2)) * 30, 0, 1.0));
+	if (uTorch)
+		result += vec3(clamp(1 - (pow(pos.x - 0.5, 2) + pow(pos.y - 0.5, 2)) * 30, 0, 1.0));
 
 
+	//SHADOWS
 	float shadow = 0.0f;
 	vec3 lightCoords = FragPosLight.xyz / FragPosLight.w;
 	float closestDepth;
 	float currentDepth;
-	vec3 lightDirection = normalize(lightPos);
-	if (lightCoords.z <= 1.0f)
+	vec3 lightDirection = normalize(uLightPos);
+	if (uShadows && uLight && lightCoords.z <= 1.0f)
 	{
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		currentDepth = lightCoords.z;
@@ -63,16 +86,13 @@ void main()
 		}
 		shadow /= pow((sampleRadius * 2 + 1), 2);
 	}
+	if (uShadows && uLight)
+		result += (diffuse * (1.0f - shadow));
 
-	vec3 result = ambient + (diffuse * (1.0f - shadow));// + torch;
+	if (!uLight && !uTorch)
+		result = vec3(1);
 
-	//if (pos.x > 0.5)
-	//	FragColor = vec4(vec3(closestDepth), 1.0f);
-	//else
-	//	FragColor = vec4(vec3(lightCoords.z), 1.0f);
-	//FragColor = vec4(vec3(10.f - shadow), 1.0f);
-
-	//FragColor = texture(uShadow, texCoord).rrrw;
-	FragColor = vec4(result.xyz, 1.0) * texture(uText, texCoord);
-	//FragColor = vec4(vec3(float(uNbFaces) / totalVertexes), 1.0);
+	FragColor = mix(mix(vec4(result, 1.0) * texture(uText0, texCoord), vec4(result, 1.0) * texture(uText1, texCoord), switchTextMix),
+				mix(vec4(result, 1.0) * vec4(vec3(clamp(uNbFaces / (totalVertexes * 3.0f) + 0.2f, 0.0f, 0.8f)), 1.0), vec4(result, 1.0) * vec4(Normal, 1.0f), switchTextMix),
+				switchTypeMix);
 }

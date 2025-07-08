@@ -22,7 +22,8 @@ SRC = main.cpp\
 		Window/Window.cpp\
 		ObjectHandler/ObjectLoader.cpp\
 		ObjectHandler/Object.cpp\
-		ShadowMap/ShadowMap.cpp
+		ShadowMap/ShadowMap.cpp\
+		ObjectSelecter/ObjectSelecter.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))

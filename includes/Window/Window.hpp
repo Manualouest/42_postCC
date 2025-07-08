@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 16:00:05 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/08 18:18:49 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 // #include <Buffers/VAO.hpp>
 // #include <Buffers/EBO.hpp>
 // #include <Texture/Texture.hpp>
+#include <includes.hpp>
 #include <ObjectHandler/ObjectLoader.hpp>
 #include <Camera/Camera.hpp>
 #include <ShadowMap/ShadowMap.hpp>
+#include <ObjectSelecter/ObjectSelecter.hpp>
 
 class Window
 {
@@ -27,13 +29,28 @@ class Window
 
 		static float	width;
 		static float	height;
+		static bool		rotate;
+		static bool		light;
+		static bool		torch;
+		static bool		shadow;
+		static float	typeMix;
+		static float	textMix;
+		static float	typeMixDiff;
+		static float	textMixDiff;
+		static v3		mixWay;
+		static bool		select;
+		static v3		mousePos;
+		static v3		lightColor;
 
 		GLFWwindow	*getContext() const;
 		float		startRenderLoop();
 		void		endRenderLoop();
+		void		HandleInputs();
 
 	private:
-		GLFWwindow	*_window;
-		float		_deltaTime;
-		double		_oldTime;
+		GLFWwindow		*_window;
+		float			_deltaTime;
+		double			_oldTime;
+		unsigned int	_monitorWidth;
+		unsigned int	_monitorHeight;
 };

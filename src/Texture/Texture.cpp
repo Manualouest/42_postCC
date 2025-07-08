@@ -6,12 +6,9 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 21:17:26 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 19:37:23 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/08 15:11:07 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h> 
 
 #include <Texture/Texture.hpp>
 
@@ -113,11 +110,14 @@ Texture::Texture(const char *textPath)
 // 	glUniform1i(texUni, unit);
 // }
 
-void	Texture::Bind(Shader shader)
+void	Texture::Bind(Shader shader, int offset)
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + offset);
 	glBindTexture(GL_TEXTURE_2D, ID);
-	glUniform1i(glGetUniformLocation(shader.ID, "uText"), 0);
+	if (offset == 0)
+		glUniform1i(glGetUniformLocation(shader.ID, "uText0"), offset);
+	else
+		glUniform1i(glGetUniformLocation(shader.ID, "uText1"), offset);
 }
 
 void	Texture::Unbind()
