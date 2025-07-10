@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 15:29:26 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/09 19:07:49 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/10 09:21:40 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,51 @@ struct math
 		}
 	};
 
+	struct v4
+	{
+		public:
+        float x, y, z, w;
+
+	    ~v4(){}
+        v4(float xyzw) : x(xyzw), y(xyzw), z(xyzw), w(xyzw)
+	    {}
+        v4() : x(0), y(0), z(0), w(0)
+	    {}
+        v4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w)
+	    {}
+    
+        v4 operator+(const v4 &v) const
+	    {
+	    	return v4(x + v.x, y + v.y, z + v.z, w + v.w);
+	    }
+        v4 operator-(const v4 &v) const
+	    {
+	    	return v4(x - v.x, y - v.y, z - v.z, w - v.w);
+	    }
+        v4 operator*(float s) const
+	    {
+	    	return v4(x * s, y * s, z * s, w * s);
+	    }
+        v4 operator/(float s) const
+	    {
+	    	return v4(x / s, y / s, z / s, w / s);
+	    }
+    
+        float dot(const v4 &v) const
+	    {
+	    	return (x * v.x + y * v.y + z * v.z + w * v.w);
+	    }
+        float length() const
+	    {
+	    	return (std::sqrt(x * x + y * y + z * z + w * w));
+	    }
+        v4 normalize() const
+	    {
+            float len = length();
+            return len > 0.0f ? *this / len : v4(0, 0, 0, 0);
+        }
+	};
+
 	struct mat4
 	{
     	float data[16];
@@ -238,24 +283,18 @@ struct math
 
 		static mat4 lookAt(const math::v3 &eye, const math::v3  center, const math::v3 &up)
 		{
-			const math::v3 f(math::v3::normalize(center - eye));
-			const math::v3 s(math::v3::normalize(math::v3::cross(f, up)));
-			const math::v3 u(math::v3::cross(s, f));
+			v3 f = math::v3::normalize(center - eye);
+			v3 s = math::v3::normalize(math::v3::cross(f, up));
+			v3 u = math::v3::cross(s, f);
 
-			mat4 Result(1);
-			Result(0, 0) = s.x;
-			Result(1, 0) = s.y;
-			Result(2, 0) = s.z;
-			Result(0, 1) = u.x;
-			Result(1, 1) = u.y;
-			Result(2, 1) = u.z;
-			Result(0, 2) = - f.x;
-			Result(1, 2) = - f.y;
-			Result(2, 2) = - f.z;
-			Result(3, 0) = - math::v3::dot(s, eye);
-			Result(3, 1) = - math::v3::dot(u, eye);
-			Result(3, 2) = math::v3::dot(f, eye);
-			return Result;
+			mat4 m = mat4::identity();
+			m(0, 0) = s.x; m(1, 0) = s.y; m(2, 0) = s.z;
+			m(0, 1) = u.x; m(1, 1) = u.y; m(2, 1) = u.z;
+			m(0, 2) = -f.x; m(1, 2) = -f.y; m(2, 2) = -f.z;
+			m(3, 0) = math::v3::dot(s, eye) * -1;
+			m(3, 1) = math::v3::dot(u, eye) * -1;
+			m(3, 2) = math::v3::dot(f, eye);
+			return (m);
 		}
 
 		static mat4 perspective(const float &fovy, const float &aspect, const float &zNear, const float &zFar)
@@ -283,24 +322,31 @@ struct math
 			return (Result);
 		}
 
-		static mat4 translate(const mat4 &m, const math::v3 &v)
+		static v4 getCol(const mat4 &m, int col)
+		{
+			return v4(m(col, 0), m(col, 1), m(col, 2), m(col, 3));
+		}
+
+		static void setCol(mat4 &m, int col, const v4 &v)
+		{
+			m(col, 0) = v.x;
+			m(col, 1) = v.y;
+			m(col, 2) = v.z;
+			m(col, 3) = v.w;
+		}
+
+		static mat4 translate(const mat4 &m, const v3 &v)
 		{
 			mat4 result = m;
 
-			float col0[4] = {m(0, 0), m(0, 1), m(0, 2), m(0, 3)};
-			float col1[4] = {m(1, 0), m(1, 1), m(1, 2), m(1, 3)};
-			float col2[4] = {m(2, 0), m(2, 1), m(2, 2), m(2, 3)};
-			float col3[4] = {m(3, 0), m(3, 1), m(3, 2), m(3, 3)};
+			v4 col0 = getCol(m, 0);
+			v4 col1 = getCol(m, 1);
+			v4 col2 = getCol(m, 2);
+			v4 col3 = getCol(m, 3);
 
-			float translation[4] = {col0[0] * v.x + col1[0] * v.y + col2[0] * v.z + col3[0],
-									col0[1] * v.x + col1[1] * v.y + col2[1] * v.z + col3[1],
-									col0[2] * v.x + col1[2] * v.y + col2[2] * v.z + col3[2],
-									col0[3] * v.x + col1[3] * v.y + col2[3] * v.z + col3[3]};
+			v4 translation = col0 * v.x + col1 * v.y + col2 * v.z + col3;
 
-			result(3, 0) = translation[0];
-			result(3, 1) = translation[1];
-			result(3, 2) = translation[2];
-			result(3, 3) = translation[3];
+			setCol(result, 3, translation);
 
 			return (result);
 		}

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 16:29:15 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/09 19:26:19 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/10 09:28:47 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ int main(int argc, char **argv)
 
 		Object object = ObjectLoader::loadObject(argv[1]);
 		Object lightEmitter = ObjectLoader::loadObject("src/asset/sphere.obj");
-		lightEmitter.pos = math::v3{float(std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)), object.max.y + 2.0f, 0.0f};
+		lightEmitter.pos = math::v3{float(std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)) * 10.0f  + object.center.x, object.max.y + 2.0f, 0.0f + object.center.z};
 		int	selected = 1;
 
-		Camera camera(math::v3{float(-std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)), 0, 0.0f});
+		Camera camera(math::v3{float(-std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)) + object.center.x, object.center.y, 0.0f + object.center.z});
 
 		camera.Matrix(45.0f, 0.1f, 100.0f, objectShader, Window::width, Window::height);
 
@@ -78,6 +78,8 @@ int main(int argc, char **argv)
 
 			lightEmitter.movement(WindowManager.getContext(), selected == 0, false);
 			object.movement(WindowManager.getContext(), selected == 1, Window::rotate);
+			lightEmitter.pos.x = float(std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)) * 10.0f + object.pos.x + object.center.x;
+			lightEmitter.pos.z = object.pos.z + object.center.z;
 
 			camera.Inputs(window);
 
@@ -94,7 +96,7 @@ int main(int argc, char **argv)
 
 
 			math::mat4	orthogonalProj = math::mat4::ortho(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 1000.0f);
-			math::mat4	lightView = math::mat4::lookAt(math::v3{100.0f, 0.5f, 0.5f}, math::v3{object.pos.x, object.pos.y, object.pos.z}, math::v3{0.0f, 1.0f, 0.0f});
+			math::mat4	lightView = math::mat4::lookAt(math::v3{100.0f, 0.5f, 0.5f}, object.pos, math::v3{0.0f, 1.0f, 0.0f});
 			math::mat4	lightProj = orthogonalProj * lightView;
 
 			
