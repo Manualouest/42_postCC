@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 17:55:22 by mbirou            #+#    #+#             */
-/*   Updated: 2025/04/12 19:53:12 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 17:15:26 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 std::string get_file(const char* filename)
 {
 	std::ifstream in(filename, std::ios::binary);
-	if (in)
+	if (!in.fail())
 	{
 		std::string contents;
 		in.seekg(0, std::ios::end);
@@ -25,7 +25,7 @@ std::string get_file(const char* filename)
 		in.close();
 		return(contents);
 	}
-	throw(errno);
+	throw(std::runtime_error(RED BOLD "Shader failed to open" CLR));
 }
 
 Shader::Shader(const char *vertexFile, const char *fragFile)
@@ -57,6 +57,11 @@ Shader::Shader(const char *vertexFile, const char *fragFile)
 	glDeleteShader(fragmentShader);
 }
 
+Shader::~Shader()
+{
+	Delete();
+}
+
 void	Shader::Activate()
 {
 	glUseProgram(ID);
@@ -77,7 +82,7 @@ void Shader::compileErrors(unsigned int shader, const char *type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog << std::endl;
+			throw(std::runtime_error(RED BOLD "SHADER_COMPILATION_ERROR for:" + std::string(type) + "\n" + infoLog + CLR));
 		}
 	}
 	else
@@ -86,7 +91,7 @@ void Shader::compileErrors(unsigned int shader, const char *type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
+			throw(std::runtime_error(RED BOLD "SHADER_LINKING_ERROR for:" + std::string(type) + "\n" + infoLog + CLR));
 		}
 	}
 }

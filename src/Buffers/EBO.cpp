@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:16:57 by mbirou            #+#    #+#             */
-/*   Updated: 2025/05/02 11:53:29 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 07:32:47 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 EBO::EBO()
 {}
+
+EBO::~EBO()
+{
+	Delete();
+}
 
 EBO::EBO(GLuint *indices, GLsizeiptr size)
 {

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 21:17:26 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 15:11:07 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 17:15:35 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_bmp_header
 	uint32_t	data_size;
 } __attribute__((packed))	bmp_header;
 
-# define BMP_ID		0x4D42 // B M
+# define BMP_ID			0x4D42
 # define HEADER_SIZE	26
 # define MAX_SIZE		0x5F5E11A
 
@@ -103,14 +103,12 @@ Texture::Texture(const char *textPath)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-// void	Texture::texUnit(Shader &shader, const char *uniform, GLuint unit)
-// {
-// 	GLuint	texUni = glGetUniformLocation(shader.ID, uniform);
-// 	shader.Activate();
-// 	glUniform1i(texUni, unit);
-// }
+Texture::~Texture()
+{
+	Delete();
+}
 
-void	Texture::Bind(Shader shader, int offset)
+void	Texture::Bind(Shader &shader, int offset)
 {
 	glActiveTexture(GL_TEXTURE0 + offset);
 	glBindTexture(GL_TEXTURE_2D, ID);

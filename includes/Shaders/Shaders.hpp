@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 17:49:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/06/01 14:23:45 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 07:17:14 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class Shader
 	public:
 		GLuint	ID;
 		Shader(const char *vertexFile, const char *fragFile);
+		~Shader();
 
 		void	Activate();
 		void	Delete();

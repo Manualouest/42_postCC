@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:23:45 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 13:32:37 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 17:53:35 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ class ShadowMap
 		ShadowMap();
 		~ShadowMap();
 
-		void	startShadowGen(glm::mat4 lightProj);
+		void	startShadowGen(math::mat4 &lightProj);
 		void	renderShadows(Object &object);
 		void	endShadowGen();
-		void	sendToShader(Shader shader);
+		void	sendToShader(Shader &shader);
 	
 		Shader	shader;
 

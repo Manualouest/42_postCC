@@ -6,56 +6,59 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:31:35 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 13:15:37 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 19:11:39 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Camera/Camera.hpp>
 
-Camera::Camera(glm::vec3 position)
+Camera::Camera(math::v3 position)
 {
 	Position = position;
-	lockCursor = -2;
+	lockCursor = 1;
+	Orientation = math::v3{float(cos(math::radians(yaw)) * cos(math::radians(pitch))), float(sin(math::radians(pitch))), float(sin(math::radians(yaw)) * cos(math::radians(pitch)))};
 }
 
 void	Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, float nWidth, float nHeight)
 {
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
+	math::mat4 view = math::mat4(1.0f);
+	math::mat4 projection = math::mat4(1.0f);
 
 	width = nWidth;
 	height = nHeight;
-	view = glm::lookAt(Position, Position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOVdeg), width / height, nearPlane, farPlane);
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uCamMatrix"), 1, GL_FALSE, glm::value_ptr(projection * view));
+	view = math::mat4::lookAt(Position, Position + Orientation, Up);
+	projection = math::mat4::perspective(math::radians(FOVdeg), width / height, nearPlane, farPlane);
+
+	math::mat4	tpMat = projection * view;
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uCamMatrix"), 1, GL_FALSE, &tpMat.data[0]);
 }
 
 void	Camera::moveInputs(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		Position += speed * Orientation;
+		Position = Position + Orientation * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+		Position = Position + (math::v3::normalize(math::v3::cross(Orientation, Up)) * -1) * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		Position += speed * -Orientation;
+		Position = Position + (Orientation * -1) * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		Position += speed * glm::normalize(glm::cross(Orientation, Up));
+		Position = Position + math::v3::normalize(math::v3::cross(Orientation, Up)) * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		Position += speed * Up;
+		Position = Position + Up * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
 	{
-		Position += speed * -Up;
+		Position = Position + (Up * -1) * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
@@ -92,20 +95,23 @@ void	Camera::Inputs(GLFWwindow *window)
 	double	mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 	
-	float roty = sensitivity * (float)(mouseY - (float)(height / 2)) / (float)height;
-	float rotx = sensitivity * (float)(mouseX - (float)(width / 2)) / (float)width;
+	float rotx = sensitivity * (float)(mouseX - (float)(width / 2.0f)) / (float)width;
+	float roty = sensitivity * (float)(mouseY - (float)(height / 2.0f)) / (float)height;
 
-	glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-roty), glm::normalize(glm::cross(Orientation, Up)));
+	yaw += rotx;
+	if (yaw > 360)
+		yaw -= 360;
+	if (yaw < -360)
+		yaw += 360;
 
-	if (!((glm::angle(newOrientation, Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Up) <= glm::radians(5.0f))))
-	{
-		Orientation = newOrientation;
-	}
+	if (pitch - roty >= 89)
+		pitch = 89;
+	else if (pitch - roty <= -89)
+		pitch = -89;
+	else
+		pitch -= roty;
 
-	Orientation = glm::rotate(Orientation, glm::radians(-rotx), Up);
+	Orientation = math::v3{float(cos(math::radians(yaw)) * cos(math::radians(pitch))), float(sin(math::radians(pitch))), float(sin(math::radians(yaw)) * cos(math::radians(pitch)))};
 
-	double mouseXmove = width / 2 - (width / 2 - mouseX) / 2;
-	if (mouseXmove < 1)
-		mouseXmove = width / 2;
-	glfwSetCursorPos(window, mouseXmove, height / 2);
+	glfwSetCursorPos(window, width / 2, height / 2);
 }

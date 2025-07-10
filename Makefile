@@ -1,4 +1,4 @@
-NAME = ft_scop
+NAME = scop
 
 CFLAGS = -g -MP -MMD
 

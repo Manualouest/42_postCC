@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 14:20:47 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 16:47:09 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 16:29:12 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class ObjectSelecter
 		ObjectSelecter();
 		~ObjectSelecter();
 
-		int	SelectObject(Object &lightEmitter, Object &object, v3 mousePos, v3 winSize);
+		int	SelectObject(Object &lightEmitter, Object &object, math::v3 mousePos, math::v3 winSize);
 	
 		Shader	shader;
 
@@ -32,5 +32,5 @@ class ObjectSelecter
 		unsigned int	_RBO;
 		unsigned int	_width = 2048;
 		unsigned int	_height = 2048;
-		v3				_colors[3] = {v3{1, 0, 0}, v3{0, 1, 0}, v3{0, 0, 1}};
+		math::v3				_colors[3] = {math::v3{1, 0, 0}, math::v3{0, 1, 0}, math::v3{0, 0, 1}};
 };

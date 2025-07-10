@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:31:02 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 21:05:12 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 17:53:50 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ ShadowMap::ShadowMap() : shader(Shader("shaders/shadowMap.vert", "shaders/shadow
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw std::runtime_error("FrameBuffer could not finish");
 }
 
 ShadowMap::~ShadowMap()
@@ -38,17 +41,17 @@ ShadowMap::~ShadowMap()
 	glDeleteTextures(1, &_shadowMap);
 }
 
-void	ShadowMap::sendToShader(Shader shader)
+void	ShadowMap::sendToShader(Shader &shader)
 {
 	glActiveTexture(GL_TEXTURE0 + 2);
 	glBindTexture(GL_TEXTURE_2D, _shadowMap);
 	glUniform1i(glGetUniformLocation(shader.ID, "uShadow"), 2);
 }
 
-void	ShadowMap::startShadowGen(glm::mat4 lightProj)
+void	ShadowMap::startShadowGen(math::mat4 &lightProj)
 {
 	shader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uLightProjection"), 1, GL_FALSE, glm::value_ptr(lightProj));
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "uLightProjection"), 1, GL_FALSE, &lightProj.data[0]);
 
 	glViewport(0, 0, _width, _height);
 	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);

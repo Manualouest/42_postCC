@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 14:25:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 21:05:08 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 17:15:23 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@ ObjectSelecter::ObjectSelecter() : shader(Shader("shaders/ObjectSelecter.vert", 
 	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
 	glBindTexture(GL_TEXTURE_2D, _ObjectSelecterMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _ObjectSelecterMap, 0);
 
 	glGenRenderbuffers(1, &_RBO);
@@ -38,13 +34,12 @@ ObjectSelecter::ObjectSelecter() : shader(Shader("shaders/ObjectSelecter.vert", 
 
 ObjectSelecter::~ObjectSelecter()
 {
-	shader.Delete();
 	glDeleteFramebuffers(1, &_FBO);
 	glDeleteRenderbuffers(1, &_RBO);
 	glDeleteTextures(1, &_ObjectSelecterMap);
 }
 
-int	ObjectSelecter::SelectObject(Object &lightEmitter, Object &object, v3 mousePos, v3 winSize)
+int	ObjectSelecter::SelectObject(Object &lightEmitter, Object &object, math::v3 mousePos, math::v3 winSize)
 {
 	shader.Activate();
 
@@ -70,7 +65,7 @@ int	ObjectSelecter::SelectObject(Object &lightEmitter, Object &object, v3 mouseP
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	v3 readcolor = {float(data[0] / 255), float(data[1] / 255), float(data[2] / 255)};
+	math::v3 readcolor = {float(data[0] / 255), float(data[1] / 255), float(data[2] / 255)};
 	for (int i = 0; i < 3; i++)
 	{
 		if (readcolor == _colors[i])

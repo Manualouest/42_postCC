@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 22:25:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/07 18:43:51 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 19:09:40 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,11 @@
 class Camera
 {
 	public:
-		glm::vec3	Position;
-		glm::vec3	Orientation = glm::vec3(0.0f, 0.0f, 1.0f);
-		glm::vec3	Up = glm::vec3(0.0f, 1.0f, 0.0f);
+		math::v3	Position;
+		math::v3	Orientation = math::v3{0.0f, 0.0f, 1.0f};
+		float		yaw = M_PI;
+		float		pitch = 0;
+		math::v3	Up = math::v3{0.0f, 1.0f, 0.0f};
 
 		float	width;
 		float	height;
@@ -27,7 +29,7 @@ class Camera
 		float	sensitivity = 50.0f;
 		int		lockCursor : 2;
 
-		Camera(glm::vec3 position);
+		Camera(math::v3 position);
 		void	Matrix(float FOVdeg, float nearPlane, float farPlane, Shader &shader, float nWidth, float nHeight);
 		void	Inputs(GLFWwindow *window);
 		void	moveInputs(GLFWwindow *window);

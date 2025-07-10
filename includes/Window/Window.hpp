@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:22:40 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/08 18:18:49 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/09 16:29:21 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,14 @@ class Window
 		static float	textMix;
 		static float	typeMixDiff;
 		static float	textMixDiff;
-		static v3		mixWay;
+		static math::v3	mixWay;
 		static bool		select;
-		static v3		mousePos;
-		static v3		lightColor;
+		static math::v3	mousePos;
+		static math::v3	lightColor;
 
 		GLFWwindow	*getContext() const;
 		float		startRenderLoop();
 		void		endRenderLoop();
-		void		HandleInputs();
 
 	private:
 		GLFWwindow		*_window;
