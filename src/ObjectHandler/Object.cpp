@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:43:56 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/10 09:18:36 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/13 09:47:53 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Object::Object(GLuint VAO_ID, GLuint VBO_ID, const std::vector<float> &vertices,
 		else if (_vertices[i * LINELEN + 2] < min.z)
 			min.z = _vertices[i * LINELEN + 2];
 	}
-	center = (max + min) / math::v3{20000, 20000, 20000};
+	center = (max + min) / math::v3{2, 2, 2};
 }
 
 Object::~Object()
@@ -77,5 +77,5 @@ void	Object::movement(GLFWwindow *window, bool move, bool rotate)
 	if (rotate)
 		_angle += 0.01;
 	_modelMatrix = math::mat4::rotate(_modelMatrix, _angle, math::v3{0, 1, 0});
-	_modelMatrix = math::mat4::translate(_modelMatrix, center * math::v3{-1, 0.5, -1});
+	_modelMatrix = math::mat4::translate(_modelMatrix, center * math::v3{-1, -1, -1});
 }

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 16:29:15 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/10 09:28:47 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/07/13 09:53:06 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int main(int argc, char **argv)
 			object.movement(WindowManager.getContext(), selected == 1, Window::rotate);
 			lightEmitter.pos.x = float(std::max((object.max.x - object.min.x) * 1.5f, (object.max.z - object.min.z) * 1.5f)) * 10.0f + object.pos.x + object.center.x;
 			lightEmitter.pos.z = object.pos.z + object.center.z;
+			lightEmitter.pos.y = object.pos.y + object.center.y;
 
 			camera.Inputs(window);
 
@@ -96,7 +97,7 @@ int main(int argc, char **argv)
 
 
 			math::mat4	orthogonalProj = math::mat4::ortho(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 1000.0f);
-			math::mat4	lightView = math::mat4::lookAt(math::v3{100.0f, 0.5f, 0.5f}, object.pos, math::v3{0.0f, 1.0f, 0.0f});
+			math::mat4	lightView = math::mat4::lookAt(math::v3{100.0f, 0.5f, 0.5f}, object.pos, math::v3{0.0f, -1.0f, 0.0f});
 			math::mat4	lightProj = orthogonalProj * lightView;
 
 			
