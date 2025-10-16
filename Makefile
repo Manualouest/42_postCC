@@ -1,4 +1,4 @@
-NAME = scop
+NAME = 42run
 
 CFLAGS = -g -MP -MMD
 
@@ -12,18 +12,7 @@ GLAD = $(GLAD_SRC:.c=.o)
 
 INCLUDES = -Iincludes/ -Ilibs/
 
-SRC = main.cpp\
-		shaders/Shaders.cpp\
-		Buffers/VBO.cpp\
-		Buffers/VAO.cpp\
-		Buffers/EBO.cpp\
-		Texture/Texture.cpp\
-		Camera/Camera.cpp\
-		Window/Window.cpp\
-		ObjectHandler/ObjectLoader.cpp\
-		ObjectHandler/Object.cpp\
-		ShadowMap/ShadowMap.cpp\
-		ObjectSelecter/ObjectSelecter.cpp
+SRC = main.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))
