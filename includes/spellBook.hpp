@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 15:45:45 by mbirou            #+#    #+#             */
-/*   Updated: 2025/07/06 10:52:09 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/03 07:55:31 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@
 # define PRP "\033[0;35m"
 # define CYN "\033[0;36m"
 # define WHT "\033[0;37m"
+# define ORG RGB(255, 92, 0)
 
-# define RGB(r, g, b) "\033[38;2;" #r ";" #g ";" #b "m"
+# define RGB(r, g, b) "\033[0;38;2;" #r ";" #g ";" #b "m"
 # define DSTR RGB(200, 200, 0)
 
 # define PRINT std::cout <<

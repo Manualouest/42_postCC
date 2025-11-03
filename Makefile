@@ -1,6 +1,6 @@
 NAME = 42run
 
-CFLAGS = -g -MP -MMD
+CFLAGS = -g -MP -MMD -O3
 
 GLFW_PATH = libs/glfw
 GLAD_PATH = libs/glad
@@ -12,7 +12,14 @@ GLAD = $(GLAD_SRC:.c=.o)
 
 INCLUDES = -Iincludes/ -Ilibs/
 
-SRC = main.cpp
+SRC = main.cpp \
+		Engine/Engine.cpp \
+		Engine/Render/CameraManager.cpp \
+		Engine/Render/ShaderManager.cpp \
+		Engine/Render/TextureManager.cpp \
+		Engine/Render/Objects/Texture.cpp \
+		Engine/Render/ModelManager.cpp \
+		Engine/Render/Objects/Model.cpp \
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 DEPS = $(addprefix obj/, $(SRC:.cpp=.d))
