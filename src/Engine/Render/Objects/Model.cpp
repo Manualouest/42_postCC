@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 15:11:24 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/03 16:25:17 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/06 10:51:34 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ std::ofstream	ofs("test.txt");
 Model::Model(const std::string &path)
 {
 	uploaded = false;
-	_pos = glm::vec3{0, 0, 0};
-	_orientation = glm::quat({0.f, 0.f, 0.f});
-	_scale = glm::vec3{1, 1, 1};
+	_pos = glm::dvec3{0, 0, 0};
+	_orientation = glm::dquat({0.f, 0.f, 0.f});
+	_scale = glm::dvec3{1, 1, 1};
 	redoMatrix();
 	if (path.find_last_of(".obj") != path.length() - 1)
 		throw(std::runtime_error(RED BOLD UNDL "Format supported is .obj"));
@@ -91,31 +91,54 @@ void	Model::remove()
 	nbVertices = 0;
 }
 
-void	Model::translate(const glm::vec3 &amount)
+void	Model::translate(const glm::dvec3 &amount)
 {
 	_pos += amount;
 	redoMatrix();
 }
 
-void	Model::rotate(const glm::vec3 &amount)
+void	Model::setPos(const glm::dvec3 &newValue)
 {
-	glm::vec3	nAmount = glm::radians(amount);
-	glm::quat	newOrient{1, nAmount.x/2.f, nAmount.y/2.f, nAmount.z/2.f};
-
-	_orientation = glm::normalize(newOrient * _orientation);
-
+	_pos = newValue;
 	redoMatrix();
 }
 
-void	Model::scale(const glm::vec3 &amount)
+void	Model::rotate(const glm::dvec3 &amount)
+{
+	glm::dquat	newOrient{1, amount.x / 2., amount.y / 2., amount.z / 2.};
+
+	_orientation = glm::normalize(newOrient * _orientation);
+	redoMatrix();
+}
+
+void	Model::setOrientation(const glm::dvec3 &newValue)
+{
+	_orientation = glm::normalize(glm::dquat{1, newValue.x / 2., newValue.y / 2., newValue.z / 2.});
+	redoMatrix();
+}
+
+
+void	Model::setOrientation(const glm::dquat &newValue)
+{
+	_orientation = glm::normalize(newValue);
+	redoMatrix();
+}
+
+void	Model::scale(const glm::dvec3 &amount)
 {
 	_scale = _scale + amount;
 	redoMatrix();
 }
 
+void	Model::setScale(const glm::dvec3 &newValue)
+{
+	_scale = newValue;
+	redoMatrix();
+}
+
 void	Model::redoMatrix()
 {
-	_matrix = glm::mat4(1);
+	_matrix = glm::dmat4(1);
 
 	_matrix = glm::translate(_matrix, _pos);
 	_matrix *= glm::mat4_cast(_orientation);
@@ -156,6 +179,7 @@ void	Model::addVertexInfo(std::stringstream &sline, const char &kind)
 		case 't':
 			sline >> sep;
 			sline >> values.x >> values.y;
+			// ofs AND sline.str() AND ": " AND values.x AND ", " AND values.y ENDL;
 			_rawTextures.push_back(glm::vec2{values.x, values.y});
 			break;
 		case 'n':
@@ -180,13 +204,22 @@ void	Model::addVertex(uint vertexIndex, int textureID = 0, glm::vec2 texture = g
 					 | (((uint64_t)(((_rawVertices[vertexIndex].y < 0) << (POS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].y * 100000)) & POS_MASK)) << Y_OFFSET) & (Y_MASK))
 					 | (((uint64_t)(((_rawVertices[vertexIndex].z < 0) << (POS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].z * 100000)) & POS_MASK))) & (Z_MASK)));
 
-	if (texture.x < 0 || texture.y < 0)
-		PRINT texture.x AND "; " AND texture.y CENDL;
-
 	vertices.push_back((((uint64_t)normal << N_OFFSET) & N_MASK)
 					 | (((uint64_t)textureID << T_OFFSET) & T_MASK)
 					 | (((uint64_t)(((texture.x < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK)) << TX_OFFSET) & (TX_MASK))
 					 | (((uint64_t)(((texture.y < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK)));
+
+	// std::bitset<24> x((((((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK))) & (TX_MASK));
+	// std::bitset<24> y((((((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK));
+	// uint64_t xy = (((((((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK)) << TX_OFFSET) & (TX_MASK)) | ((((((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK)));
+
+	// ofs AND x AND "; " AND y AND ": " AND xy ENDL;
+
+	// float tx = float((xy >> TX_OFFSET) & TPOS_MASK) / 1000000.0;
+	// float ty = float(xy & TPOS_MASK) / 1000000.0;;
+
+	// ofs AND "	" AND texture.x AND "; " AND texture.y AND "| " AND tx AND "; " AND ty ENDL;
+
 }
 
 void	Model::computeUvs(int indexes[4][3], glm::vec2 text[4], int nbElem)
@@ -262,6 +295,8 @@ void	Model::addFace(std::stringstream &sline)
 		text[2] = _rawTextures[indexes[2][1]];
 		if (i == 4)
 			text[3] = _rawTextures[indexes[3][1]];
+		// ofs AND sline.str() AND "; " AND "(" AND indexes[0][1] AND "; " AND text[0].x AND ":" AND text[0].y AND "), " AND "(" AND indexes[1][1] AND "; "  AND text[1].x AND ":" AND text[1].y AND "), "
+		// 		 AND "(" AND indexes[2][1] AND "; "  AND text[2].x AND ":" AND text[2].y AND ")" ENDL;
 	}
 
 	addVertex(indexes[0][0], _currentTexture, text[0], indexes[0][2]);
@@ -324,7 +359,6 @@ void	Model::loadMtl(std::stringstream &sline, const std::string &path)
 				throw(std::runtime_error(RED BOLD UNDL "MtlFile is invalid." CLR));
 			std::getline(mtlLine, words);
 			_usedTextures.insert(words);
-			PRINT genPath(words, path) ENDL;
 			_textures[currentMtl] = TextureManager::loadImage(words, genPath(words, path).c_str());
 		}
 	}
@@ -356,7 +390,6 @@ void	Model::readFile(const std::string &path)
 				addFace(sline);
 				break;
 			case 'm':
-				PRINT (int)(sline.str()[0]) AND ", " AND (int)(p) ENDL;
 				// PRINT sline.str() AND "; " AND i CENDL;
 				loadMtl(sline, path);
 				break;
@@ -369,6 +402,9 @@ void	Model::readFile(const std::string &path)
 				break;
 		}
 	}
+
+	// for (auto tx : _rawTextures)
+	// 	ofs AND tx.x AND "; " AND tx.y ENDL;
 
 	nbVertices = vertices.size();
 	_rawVertices.clear();

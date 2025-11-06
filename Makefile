@@ -12,17 +12,22 @@ GLAD = $(GLAD_SRC:.c=.o)
 
 INCLUDES = -Iincludes/ -Ilibs/
 
-SRC = main.cpp \
+SRC =	main.cpp \
 		Engine/Engine.cpp \
+		Engine/Render/Objects/Window.cpp \
 		Engine/Render/CameraManager.cpp \
 		Engine/Render/ShaderManager.cpp \
 		Engine/Render/TextureManager.cpp \
 		Engine/Render/Objects/Texture.cpp \
 		Engine/Render/ModelManager.cpp \
 		Engine/Render/Objects/Model.cpp \
+		Engine/Scene/SceneManager.cpp \
+		Engine/Scene/Scenes/TitleScreen.cpp
 
-OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
-DEPS = $(addprefix obj/, $(SRC:.cpp=.d))
+OBJDIR = obj/
+
+OBJ = $(addprefix $(OBJDIR), $(SRC:.cpp=.o))
+DEPS = $(addprefix $(OBJDIR), $(SRC:.cpp=.d))
 
 all: glfw glad glm $(NAME)
 
@@ -30,11 +35,10 @@ $(GLAD): %.o: %.c
 	@gcc $(INCLUDES) $< -c -o $@
 	@echo "\033[32;1mCompiled " $@ "\033[0m"
 
-obj/%.o: src/%.cpp
+$(OBJDIR)%.o: src/%.cpp
 	@mkdir -p $(dir $@)
 	@c++ $(CFLAGS) $(INCLUDES) $< -c -o $@
 	@echo "\033[32;1mCompiled " $@ "\033[0m"
-
 
 download_glfw:
 	@cd libs; \
@@ -63,7 +67,6 @@ glfw:
 		make --no-print-directory download_glfw; \
 	fi
 
-
 download_glad:
 	@cd libs; \
 	echo "\033[31;1;4mglad Not Found\033[0m"; \
@@ -91,7 +94,6 @@ glad:
 		make --no-print-directory download_glad; \
 	fi
 
-
 download_glm:
 	@cd libs; \
 	echo "\033[31;1;4mglad Not Found\033[0m"; \
@@ -110,8 +112,6 @@ glm:
 		make --no-print-directory download_glm; \
 	fi
 
-
-
 $(NAME): $(GLAD) $(OBJ)
 	@c++ -o $(NAME) $(CFLAGS) $(OBJ) $(GLAD) $(GLFW) $(INCLUDES)
 	@echo "\033[32;1;4mCompiled executable\033[0m"
@@ -122,7 +122,7 @@ cleanlibs:
 	rm -rf $(GLM_PATH)
 
 clean:
-	@rm -rf obj/
+	@rm -rf $(OBJDIR)
 	@rm -rf libs/glad/glad.o 2>/dev/null
 	@echo "\033[0;32;1mCleaned objects\033[0m"
 

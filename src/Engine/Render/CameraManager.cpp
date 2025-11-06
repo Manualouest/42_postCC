@@ -6,71 +6,90 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:49:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/10/25 14:09:29 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/05 12:47:40 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include <Engine/Render/CameraManager.hpp>
-#include <Engine/Engine.hpp>
 
-CameraManager::CameraManager() {}
+CameraManager	*CameraManager::_instance = NULL;
+
+CameraManager::CameraManager()
+{
+	if (!_instance)
+		_instance = this;
+}
 
 CameraManager::~CameraManager() {}
 
 void	CameraManager::update()
 {
-	_direction.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
-	_direction.y = sin(glm::radians(_pitch));
-	_direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_checkInstance();
 
-	_front = glm::normalize(_direction);
-	_right = glm::normalize(glm::cross(_front, _worldUp));
-	_up = glm::normalize(glm::cross(_right, _front));
-	_updatePos();
+	_instance->_direction.x = cos(glm::radians(_instance->_yaw)) * cos(glm::radians(_instance->_pitch));
+	_instance->_direction.y = sin(glm::radians(_instance->_pitch));
+	_instance->_direction.z = sin(glm::radians(_instance->_yaw)) * cos(glm::radians(_instance->_pitch));
+
+	_instance->_front = glm::normalize(_instance->_direction);
+	_instance->_right = glm::normalize(glm::cross(_instance->_front, _instance->_worldUp));
+	_instance->_up = glm::normalize(glm::cross(_instance->_right, _instance->_front));
+	_instance->_updatePos();
 }
 
 void	CameraManager::selfUpdate()
 {
-	_aspectRation = WWIDTH / WHEIGHT;
-	setYaw(_yaw + _sensi * (Engine::getMousePosX() - (WWIDTH / 2.f)) / (float)WWIDTH);
-	setPitch(_pitch - _sensi * (Engine::getMousePosY() - (WHEIGHT / 2.f)) / (float)WHEIGHT);
+	_checkInstance();
+
+	_instance->_aspectRation = WWIDTH / WHEIGHT;
+	setYaw(_instance->_yaw + _instance->_sensi * (Window::getMousePosX() - (WWIDTH / 2.f)) / (float)WWIDTH);
+	setPitch(_instance->_pitch - _instance->_sensi * (Window::getMousePosY() - (WHEIGHT / 2.f)) / (float)WHEIGHT);
 	update();
-	_updatePos();
+	_instance->_updatePos();
 }
 
 void	CameraManager::setViewProjMatrix()
 {
-	glm::mat4	view = this->getViewMatrix();
-	glm::mat4	projections = glm::perspective(_fov, _aspectRation, 0.1f, _farPlane);
+	_checkInstance();
+
+	glm::mat4	view = _instance->getViewMatrix();
+	glm::mat4	projections = glm::perspective(_instance->_fov, _instance->_aspectRation, 0.1f, _instance->_farPlane);
 
 	ShaderManager::setMat4("view", view);
 	ShaderManager::setMat4("proj", projections);
 }
 
-glm::mat4	CameraManager::getViewMatrix() const
+glm::mat4	CameraManager::getViewMatrix()
 {
-	return (glm::lookAt(_pos, _pos + _front, _worldUp));
+	_checkInstance();
+
+	return (glm::lookAt(_instance->_pos, _instance->_pos + _instance->_front, _instance->_worldUp));
 }
 
 void	CameraManager::_updatePos()
 {
-	if (Engine::getRepeatInput(GLFW_KEY_W))
+	if (Window::getRepeatInput(GLFW_KEY_W))
 		_pos += _direction * _speed;
-	if (Engine::getRepeatInput(GLFW_KEY_S))
+	if (Window::getRepeatInput(GLFW_KEY_S))
 		_pos += -_direction * _speed;
-	if (Engine::getRepeatInput(GLFW_KEY_A))
+	if (Window::getRepeatInput(GLFW_KEY_A))
 		_pos += -_right * _speed;
-	if (Engine::getRepeatInput(GLFW_KEY_D))
+	if (Window::getRepeatInput(GLFW_KEY_D))
 		_pos += _right * _speed;
 
-	if (Engine::getRepeatInput(GLFW_KEY_SPACE))
+	if (Window::getRepeatInput(GLFW_KEY_SPACE))
 		_pos += _worldUp * _speed;
-	if (Engine::getRepeatInput(GLFW_KEY_LEFT_ALT))
+	if (Window::getRepeatInput(GLFW_KEY_LEFT_ALT))
 		_pos += -_worldUp * _speed;
 	
-	if (Engine::getRepeatInput(GLFW_KEY_LEFT_SHIFT))
+	if (Window::getRepeatInput(GLFW_KEY_LEFT_SHIFT))
 		_speed = 10.;
 	else
 		_speed = 0.5;
+}
+
+void	CameraManager::_checkInstance()
+{
+	if (!_instance)
+		throw(std::runtime_error(RED BOLD UNDL "CameraManager instance not created" CLR));
 }

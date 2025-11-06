@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:11:36 by mbirou            #+#    #+#             */
-/*   Updated: 2025/10/25 10:54:15 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/05 12:47:43 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # define CAMERAMANAGER_HPP
 
 #include <Engine/Render/ShaderManager.hpp>
+#include <Engine/Render/Objects/Window.hpp>
 
 # include <glm/glm.hpp>
 # include <glm/gtc/matrix_transform.hpp>
@@ -28,29 +29,33 @@ class	CameraManager
 		CameraManager();
 		~CameraManager();
 	
-		void		update();
-		void		selfUpdate();
-		void		setViewProjMatrix();
-		glm::mat4	getViewMatrix() const;
+		static void			update();
+		static void			selfUpdate();
+		static void			setViewProjMatrix();
+		static glm::mat4	getViewMatrix();
 
-		float		getYaw() const		{return (_yaw);}
-		float		getPitch() const	{return (_pitch);}
-		glm::vec3	getPos() const		{return (_pos);}
-		double		getSensi() const	{return (_sensi);}
-		double		getSpeed() const	{return (_speed);}
+		static float		getYaw()	{_checkInstance(); return (_instance->_yaw);}
+		static float		getPitch()	{_checkInstance(); return (_instance->_pitch);}
+		static glm::vec3	getPos()	{_checkInstance(); return (_instance->_pos);}
+		static double		getSensi()	{_checkInstance(); return (_instance->_sensi);}
+		static double		getSpeed()	{_checkInstance(); return (_instance->_speed);}
 
-		void	setYaw(const float &yaw)		{_yaw = glm::mod(yaw, 360.f);}
-		void	setPitch(const float &pitch)	{_pitch = glm::clamp(pitch, -89.f, 89.f);}
-		void	setPos(const glm::vec3 &pos)	{_pos = pos;}
+		static void	setYaw(const float &yaw)		{_checkInstance(); _instance->_yaw = glm::mod(yaw, 360.f);}
+		static void	setPitch(const float &pitch)	{_checkInstance(); _instance->_pitch = glm::clamp(pitch, -89.f, 89.f);}
+		static void	setPos(const glm::vec3 &pos)	{_checkInstance(); _instance->_pos = pos;}
 
-		void	setFov(const float &fov)					{_fov = glm::radians(fov);}
-		void	setAspectRation(const float &aspectRation)	{_aspectRation = aspectRation;}
-		void	setFarPlane(const float &farPlane)			{_farPlane = farPlane;}
-		void	setSensi(const double &newSensi)			{_sensi = newSensi;}
-		void	setSpeed(const double &newSpeed)			{_speed = newSpeed;}
+		static void	setFov(const float &fov)					{_checkInstance(); _instance->_fov = glm::radians(fov);}
+		static void	setAspectRation(const float &aspectRation)	{_checkInstance(); _instance->_aspectRation = aspectRation;}
+		static void	setFarPlane(const float &farPlane)			{_checkInstance(); _instance->_farPlane = farPlane;}
+		static void	setSensi(const double &newSensi)			{_checkInstance(); _instance->_sensi = newSensi;}
+		static void	setSpeed(const double &newSpeed)			{_checkInstance(); _instance->_speed = newSpeed;}
 
 	private:
+		static void	_checkInstance();
+
 		void		_updatePos();
+
+		static CameraManager	*_instance;
 
 		float		_yaw = 270.f;
 		float		_pitch = 0.f;

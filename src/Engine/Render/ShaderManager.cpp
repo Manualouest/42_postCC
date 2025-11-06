@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 18:52:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/10/26 19:42:50 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/06 10:21:29 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ ShaderManager::ShaderManager()
 
 ShaderManager::~ShaderManager()
 {
+	for (auto shader : _shaders)
+		glDeleteProgram(shader.second);
+
+	_shaders.clear();
+
+	PRINT DSTR BOLD "ShaderManager Destroyed" CENDL;
 }
 
 static int	loadVertexShader(const char *shader)
@@ -135,9 +141,24 @@ void	ShaderManager::addShader(const std::string &shaderID, const std::string &pa
 	_instance->_shaders.insert({shaderID, _instance->_currentId});
 }
 
+void	ShaderManager::deleteshader(const std::string &shaderID)
+{
+	_checkInstance();
+
+	if (_instance->_shaders.find(shaderID) == _instance->_shaders.end())
+		throw(std::runtime_error(RED BOLD UNDL "Shader doesn't exist." CLR));
+
+	glDeleteProgram(_instance->_shaders[shaderID]);
+	_instance->_shaders.erase(shaderID);
+}
+
 void	ShaderManager::bindShader(const std::string &shaderID)
 {
 	_checkInstance();
+
+	if (_instance->_shaders.find(shaderID) == _instance->_shaders.end())
+		throw(std::runtime_error(RED BOLD UNDL "Shader doesn't exist." CLR));
+
 	_instance->_currentId = _instance->_shaders[shaderID];
 	glUseProgram(_instance->_currentId);
 }
@@ -145,36 +166,42 @@ void	ShaderManager::bindShader(const std::string &shaderID)
 void	ShaderManager::setBool(const std::string &name, bool value)
 {
 	_checkInstance();
+
 	glUniform1i(glGetUniformLocation(_instance->_currentId, name.c_str()), (int)value);
 }
 
 void	ShaderManager::setInt(const std::string &name, int value)
 {
 	_checkInstance();
+
 	glUniform1i(glGetUniformLocation(_instance->_currentId, name.c_str()), value);
 }
 
 void	ShaderManager::setFloat(const std::string &name, float value)
 {
 	_checkInstance();
+
 	glUniform1f(glGetUniformLocation(_instance->_currentId, name.c_str()), value);
 }
 
 void	ShaderManager::setMat4(const std::string &name, glm::mat4 value)
 {
 	_checkInstance();
+
 	glUniformMatrix4fv(glGetUniformLocation(_instance->_currentId, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 void	ShaderManager::setVec3(const std::string &name, glm::vec3 value)
 {
 	_checkInstance();
+
 	glUniform3fv(glGetUniformLocation(_instance->_currentId, name.c_str()), 1, glm::value_ptr(value));
 }
 
 void	ShaderManager::setVec3Array(const std::string &name, glm::vec3 *values, int nbValues)
 {
 	_checkInstance();
+
 	glUniform3fv(glGetUniformLocation(_instance->_currentId, name.c_str()), nbValues, glm::value_ptr(values[0]));
 }
 

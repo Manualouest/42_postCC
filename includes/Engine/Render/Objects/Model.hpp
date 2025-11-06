@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 14:06:19 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/03 14:57:26 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/06 10:51:31 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,19 @@ struct	Model
 	void	upload();
 	void	remove();
 
-	void	translate(const glm::vec3 &amount);
-	void	rotate(const glm::vec3 &amount);
-	void	scale(const glm::vec3 &amount);
+	void	translate(const glm::dvec3 &amount);
+	void	setPos(const glm::dvec3 &newValue);
+	void	rotate(const glm::dvec3 &amount);
+	void	setOrientation(const glm::dvec3 &newValue);
+	void	setOrientation(const glm::dquat &newValue);
+	void	scale(const glm::dvec3 &amount);
+	void	setScale(const glm::dvec3 &newValue);
+
+	glm::dvec3	getPos() const {return (_pos);}
 
 	void	requestTextures() {TextureManager::requestTextures(_usedTextures);}
-	
+	void	removeRequests() {TextureManager::deleteTextures(_usedTextures);}
+
 	bool					uploaded;
 	std::vector<uint64_t>	vertices;
 	uint					nbVertices;
@@ -104,11 +111,12 @@ struct	Model
 
 		GLuint	_VAO = 0, _VBO = 0;
 
-		glm::mat4	_matrix;
-		glm::quat	_orientation;
-		glm::vec3	_pos;
-		glm::vec3	_scale;
+		glm::dmat4	_matrix;
+		glm::dquat	_orientation;
+		glm::dvec3	_pos;
+		glm::dvec3	_scale;
 };
+
 
 constexpr void		computeNormals()
 {

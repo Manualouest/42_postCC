@@ -16,13 +16,15 @@ class	TextureManager
 		static void	use(const std::string &textureID, const char *uniformName, const int &offset);
 		static void	reset(void);
 		static int	loadImage(const std::string &textureID, const char *path);
-		static void	deleteImage(const std::string &textureID);
+		static void	deleteTexture(const std::string &textureID);
+		static void	deleteTextures(const std::set<std::string> &textureIDs);
 
 		static Texture	getTexture(const std::string &textureID);
 		static int		getTextureNb(const std::string &textureID);
 
 		static void	useArray(const char *uniformName, const int &offset);
 		static void	resetArray();
+		static void	deleteArray();
 		static void	makeArray(const std::set<std::string> &textureIDs);
 
 		static void	requestTexture(const std::string &textureID) {_checkInstance(); _instance->_RequestedIds.insert(textureID);}

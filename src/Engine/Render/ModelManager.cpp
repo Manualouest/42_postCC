@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 13:26:48 by mbirou            #+#    #+#             */
-/*   Updated: 2025/10/25 13:44:22 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/05 09:03:36 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,14 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-	for (auto model : _models)
+	_checkInstance();
+
+	for (auto model : _instance->_models)
 		model.second.remove();
+
+	_instance->_models.clear();
+
+	PRINT DSTR BOLD "ModelManager Destroyed" CENDL;
 }
 
 void	ModelManager::addModel(const std::string &modelID, const std::string &path)

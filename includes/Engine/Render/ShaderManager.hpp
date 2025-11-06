@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 18:51:18 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/01 17:21:28 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/06 09:48:43 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class	ShaderManager
 		~ShaderManager();
 
 		static void	addShader(const std::string &shaderID, const std::string &path);
+		static void	deleteshader(const std::string &shaderID);
 		static void	bindShader(const std::string &shaderID);
 
 		static void	setBool(const std::string &name, bool value);
