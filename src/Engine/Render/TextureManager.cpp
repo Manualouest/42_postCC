@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 18:57:10 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 10:14:38 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 19:14:20 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ TextureManager::~TextureManager()
 		glDeleteTextures(1, &_instance->_ArrayID);
 	
 	_instance->_ArrayID = -1;
+
+	_instance = NULL;
 
 	PRINT DSTR BOLD "TextureManager Destroyed" CENDL;
 }
@@ -108,11 +110,11 @@ int	TextureManager::getTextureNb(const std::string &textureID)
 	if (_instance->_textures.find(textureID) == _instance->_textures.end())
 		return (-1);
 	
-	int	i;
+	int	i = 0;
 	for (auto texture : _instance->_textures)
 	{
 		if (texture.first == textureID)
-			return (i + 1);
+			return (i);
 		i ++;
 	}
 	return (-1);
@@ -163,14 +165,14 @@ void	TextureManager::makeArray(const std::set<std::string> &textureIDs)
 
 	for (auto ID : textureIDs)
 	{
-		nbLayers ++;
+		nbLayers = glm::max(nbLayers, getTextureNb(ID));
 		width = glm::max(width, _instance->_textures[ID].width);
 		height = glm::max(height, _instance->_textures[ID].height);
 	}
 
 	glGenTextures(1, &_instance->_ArrayID);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, _instance->_ArrayID);
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, width, height, nbLayers);
+	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, width, height, nbLayers + 1);
 
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -179,9 +181,8 @@ void	TextureManager::makeArray(const std::set<std::string> &textureIDs)
 
 	for (auto ID : textureIDs)
 	{
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, depth, _instance->_textures[ID].width, _instance->_textures[ID].height,
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, getTextureNb(ID), _instance->_textures[ID].width, _instance->_textures[ID].height,
 						1, GL_RGBA, GL_UNSIGNED_BYTE, _instance->_textures[ID].data.data());
-		depth ++;
 	}
 
 	glGenerateMipmap(GL_TEXTURE_2D_ARRAY);

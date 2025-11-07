@@ -22,7 +22,8 @@ SRC =	main.cpp \
 		Engine/Render/ModelManager.cpp \
 		Engine/Render/Objects/Model.cpp \
 		Engine/Scene/SceneManager.cpp \
-		Engine/Scene/Scenes/TitleScreen.cpp
+		Engine/Scene/Scenes/TitleScreen.cpp \
+		Engine/UI_UX/GuiManager.cpp
 
 OBJDIR = obj/
 

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 18:52:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 10:21:29 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 20:31:04 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ ShaderManager::~ShaderManager()
 		glDeleteProgram(shader.second);
 
 	_shaders.clear();
+
+	_instance = NULL;
 
 	PRINT DSTR BOLD "ShaderManager Destroyed" CENDL;
 }

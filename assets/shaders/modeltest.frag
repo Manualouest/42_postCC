@@ -13,6 +13,6 @@ void main()
 {
 	//FragColor = vec4(abs(Onormal), 1);
 	//FragColor = texture(text, (texCoord.xy));
-	FragColor = texture(texts, vec3(texCoord.xy, 0));
+	FragColor = texture(texts, texCoord);
 	//FragColor = vec4(texCoord.xy, 0, 1);
 }

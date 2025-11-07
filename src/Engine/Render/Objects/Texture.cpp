@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 14:04:16 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/03 16:39:08 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 20:31:06 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	check_header(bmp_header *header)
 		throw std::runtime_error(std::string("Invalid texture identifier"));
 	if (header->size <= HEADER_SIZE || header->size > MAX_SIZE)
 		throw std::runtime_error(std::string("Invalid texture size"));
-	std::cout << header->data_offset << std::endl;
 	if (header->data_offset != HEADER_SIZE)
 		throw std::runtime_error(std::string("Invalid texture data_offset"));
 	if (header->dib_size != 12)

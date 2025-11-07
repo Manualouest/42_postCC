@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 13:26:48 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/05 09:03:36 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 19:14:06 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ ModelManager::~ModelManager()
 		model.second.remove();
 
 	_instance->_models.clear();
+
+	_instance = NULL;
 
 	PRINT DSTR BOLD "ModelManager Destroyed" CENDL;
 }

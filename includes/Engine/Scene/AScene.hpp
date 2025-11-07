@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:55:16 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 09:38:40 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 19:58:06 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <Engine/Render/ShaderManager.hpp>
 # include <Engine/Render/TextureManager.hpp>
 # include <Engine/Render/ModelManager.hpp>
+# include <Engine/UI_UX/GuiManager.hpp>
 
 class AScene
 {

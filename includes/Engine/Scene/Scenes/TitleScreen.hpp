@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 14:52:43 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 09:39:16 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 20:08:58 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define TITLESCREEN_HPP
 
 #include <Engine/Scene/AScene.hpp>
+#include <Engine/UI_UX/GUIs/TestGui.hpp>
 
 class TitleScreen : public AScene
 {
@@ -26,6 +27,9 @@ class TitleScreen : public AScene
 		void	processInputs();
 		void	update();
 		void	draw();
+
+	private:
+		bool	menuOpen = false;
 };
 
 #endif

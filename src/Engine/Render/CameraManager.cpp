@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:49:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/05 12:47:40 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 19:14:02 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ CameraManager::CameraManager()
 		_instance = this;
 }
 
-CameraManager::~CameraManager() {}
+CameraManager::~CameraManager()
+{
+	_instance = NULL;
+}
 
 void	CameraManager::update()
 {

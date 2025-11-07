@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 15:11:24 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 10:51:34 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/07 20:38:21 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,9 +402,6 @@ void	Model::readFile(const std::string &path)
 				break;
 		}
 	}
-
-	// for (auto tx : _rawTextures)
-	// 	ofs AND tx.x AND "; " AND tx.y ENDL;
 
 	nbVertices = vertices.size();
 	_rawVertices.clear();
