@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:55:16 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 19:58:06 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 12:44:50 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class AScene
 		virtual void	update() = 0;
 		virtual void	draw() = 0;
 
-	private:
+	protected:
 		std::string	_id;
 		bool		_isInit = false;
 };

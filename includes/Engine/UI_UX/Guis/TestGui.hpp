@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 14:55:10 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 20:24:38 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 15:20:00 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ class TestGui : public AGui
 		TestGui() {;}
 		~TestGui() {;}
 	
-		void	init() {;}
-		void	unload() {;}
-		void	processInputs() {;}
-		void	update() {;}
-		void	draw() {;}
+		void	init();
+		void	unload();
+		void	processInputs();
+		void	update();
+		void	draw();
 };
 
 #endif

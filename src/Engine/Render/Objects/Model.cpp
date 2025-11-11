@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 15:11:24 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 20:38:21 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/11 13:35:20 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 glm::vec3	Model::normals[900] = {{0, 0, 0}};
 float		Model::normalsLength[900] = {0};
-
-
-#include <fstream>
-
-std::ofstream	ofs("test.txt");
 
 Model::Model(const std::string &path)
 {
@@ -179,7 +174,6 @@ void	Model::addVertexInfo(std::stringstream &sline, const char &kind)
 		case 't':
 			sline >> sep;
 			sline >> values.x >> values.y;
-			// ofs AND sline.str() AND ": " AND values.x AND ", " AND values.y ENDL;
 			_rawTextures.push_back(glm::vec2{values.x, values.y});
 			break;
 		case 'n':
@@ -188,11 +182,6 @@ void	Model::addVertexInfo(std::stringstream &sline, const char &kind)
 			_rawNormals.push_back(getCosineSimilarity(values));
 			break;
 	}
-}
-
-void printvec3(const glm::vec3 &vec)
-{
-	ofs << vec.x AND ", " AND vec.y AND ", " AND vec.z;
 }
 
 #include <bitset>
@@ -208,18 +197,6 @@ void	Model::addVertex(uint vertexIndex, int textureID = 0, glm::vec2 texture = g
 					 | (((uint64_t)textureID << T_OFFSET) & T_MASK)
 					 | (((uint64_t)(((texture.x < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK)) << TX_OFFSET) & (TX_MASK))
 					 | (((uint64_t)(((texture.y < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK)));
-
-	// std::bitset<24> x((((((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK))) & (TX_MASK));
-	// std::bitset<24> y((((((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK));
-	// uint64_t xy = (((((((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK)) << TX_OFFSET) & (TX_MASK)) | ((((((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK)));
-
-	// ofs AND x AND "; " AND y AND ": " AND xy ENDL;
-
-	// float tx = float((xy >> TX_OFFSET) & TPOS_MASK) / 1000000.0;
-	// float ty = float(xy & TPOS_MASK) / 1000000.0;;
-
-	// ofs AND "	" AND texture.x AND "; " AND texture.y AND "| " AND tx AND "; " AND ty ENDL;
-
 }
 
 void	Model::computeUvs(int indexes[4][3], glm::vec2 text[4], int nbElem)
@@ -295,8 +272,6 @@ void	Model::addFace(std::stringstream &sline)
 		text[2] = _rawTextures[indexes[2][1]];
 		if (i == 4)
 			text[3] = _rawTextures[indexes[3][1]];
-		// ofs AND sline.str() AND "; " AND "(" AND indexes[0][1] AND "; " AND text[0].x AND ":" AND text[0].y AND "), " AND "(" AND indexes[1][1] AND "; "  AND text[1].x AND ":" AND text[1].y AND "), "
-		// 		 AND "(" AND indexes[2][1] AND "; "  AND text[2].x AND ":" AND text[2].y AND ")" ENDL;
 	}
 
 	addVertex(indexes[0][0], _currentTexture, text[0], indexes[0][2]);
@@ -332,10 +307,7 @@ void	Model::loadMtl(std::stringstream &sline, const std::string &path)
 
 	sline >> words;
 	std::getline(sline, words);
-	
-	// PRINT "hey" CENDL;
 
-	// PRINT words AND ", " AND words.empty() CENDL;
 	if (words.empty())
 		throw(std::runtime_error(RED BOLD UNDL "Object's MtlFile is invalid." CLR));
 	mtlFile.open(genPath(words, path));
@@ -358,8 +330,9 @@ void	Model::loadMtl(std::stringstream &sline, const std::string &path)
 			if (currentMtl.empty())
 				throw(std::runtime_error(RED BOLD UNDL "MtlFile is invalid." CLR));
 			std::getline(mtlLine, words);
-			_usedTextures.insert(words);
-			_textures[currentMtl] = TextureManager::loadImage(words, genPath(words, path).c_str());
+			_usedTextures.push_back(words);
+			TextureManager::loadImage(words, genPath(words, path).c_str());
+			_textures[currentMtl] = _usedTextures.size() - 1;
 		}
 	}
 }
@@ -390,7 +363,6 @@ void	Model::readFile(const std::string &path)
 				addFace(sline);
 				break;
 			case 'm':
-				// PRINT sline.str() AND "; " AND i CENDL;
 				loadMtl(sline, path);
 				break;
 			case 'u':

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 18:57:10 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 19:14:20 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 15:47:18 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ TextureManager::~TextureManager()
 	
 	_instance->_textures.clear();
 
-	if (_instance->_ArrayID != -1)
-		glDeleteTextures(1, &_instance->_ArrayID);
+	for (auto array : _instance->_arrays)
+		glDeleteTextures(1, &array.second);
 	
-	_instance->_ArrayID = -1;
+	_instance->_arrays.clear();
 
 	_instance = NULL;
 
@@ -45,6 +45,7 @@ void	TextureManager::use(const std::string &textureID, const char *uniformName, 
 
 	if (_instance->_textures.find(textureID) == _instance->_textures.end())
 		throw(std::runtime_error(RED BOLD UNDL "Texture doesn't exist" CLR));
+
 	_instance->_currentID = textureID;
 	ShaderManager::setInt(uniformName, offset);
 	glActiveTexture(GL_TEXTURE0 + offset);
@@ -58,20 +59,18 @@ void	TextureManager::reset(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-int	TextureManager::loadImage(const std::string &textureID, const char *path)
+void	TextureManager::loadImage(const std::string &textureID, const char *path)
 {
 	_checkInstance();
 
 	if (_instance->_textures.find(textureID) != _instance->_textures.end())
-		return (getTextureNb(textureID));
-		// throw(std::runtime_error(RED BOLD UNDL "This texture already exist" CLR));
+		throw(std::runtime_error(RED BOLD UNDL "The texture already exist" CLR));
 
 	Texture	newTexture(path);
 
 	if (!newTexture.ID)
 		throw(std::runtime_error(RED BOLD UNDL "Texture failed to load" CLR));
 	_instance->_textures.insert({textureID, newTexture});
-	return (getTextureNb(textureID));
 }
 
 void	TextureManager::deleteTexture(const std::string &textureID)
@@ -85,7 +84,7 @@ void	TextureManager::deleteTexture(const std::string &textureID)
 	}
 }
 
-void	TextureManager::deleteTextures(const std::set<std::string> &textureIDs)
+void	TextureManager::deleteTextures(const std::vector<std::string> &textureIDs)
 {
 	_checkInstance();
 
@@ -103,34 +102,16 @@ Texture	TextureManager::getTexture(const std::string &textureID)
 	return (Texture{0});
 }
 
-int	TextureManager::getTextureNb(const std::string &textureID)
+void	TextureManager::useArray(const std::string &arrayID, const char *uniformName, const int &offset)
 {
 	_checkInstance();
 
-	if (_instance->_textures.find(textureID) == _instance->_textures.end())
-		return (-1);
-	
-	int	i = 0;
-	for (auto texture : _instance->_textures)
-	{
-		if (texture.first == textureID)
-			return (i);
-		i ++;
-	}
-	return (-1);
-}
-
-
-void	TextureManager::useArray(const char *uniformName, const int &offset)
-{
-	_checkInstance();
-
-	if (_instance->_ArrayID == -1)
+	if (_instance->_arrays.find(arrayID) == _instance->_arrays.end())
 		throw(std::runtime_error(RED BOLD UNDL "No texture Array was created" CLR));
 
 	ShaderManager::setInt(uniformName, offset);
 	glActiveTexture(GL_TEXTURE0 + offset);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, _instance->_ArrayID);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, _instance->_arrays[arrayID]);
 }
 
 void	TextureManager::resetArray()
@@ -140,24 +121,26 @@ void	TextureManager::resetArray()
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
-void	TextureManager::deleteArray()
+void	TextureManager::deleteArray(const std::string &arrayID)
 {
 	_checkInstance();
 
-	if (_instance->_ArrayID != -1)
-		glDeleteTextures(1, &_instance->_ArrayID);
-	_instance->_ArrayID = -1;
+	if (_instance->_arrays.find(arrayID) != _instance->_arrays.end())
+	{
+		glDeleteTextures(1, &_instance->_arrays[arrayID]);
+		_instance->_arrays.erase(arrayID);
+	}
 }
 
-void	TextureManager::makeArray(const std::set<std::string> &textureIDs)
+void	TextureManager::makeArray(const std::string &arrayID, const std::vector<std::string> &textureIDs)
 {
 	_checkInstance();
 
-	if (_instance->_ArrayID != -1)
-	{
-		glDeleteTextures(1, &_instance->_ArrayID);
-		_instance->_ArrayID = -1;
-	}
+	if (_instance->_arrays.find(arrayID) != _instance->_arrays.end())
+		throw(std::runtime_error(RED BOLD UNDL "This array already exists" CLR));
+
+	_instance->_arrays.insert(std::make_pair(arrayID, -1));
+
 	int	depth = 0;
 	int	width = 0;
 	int	height = 0;
@@ -165,13 +148,13 @@ void	TextureManager::makeArray(const std::set<std::string> &textureIDs)
 
 	for (auto ID : textureIDs)
 	{
-		nbLayers = glm::max(nbLayers, getTextureNb(ID));
+		nbLayers ++;
 		width = glm::max(width, _instance->_textures[ID].width);
 		height = glm::max(height, _instance->_textures[ID].height);
 	}
 
-	glGenTextures(1, &_instance->_ArrayID);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, _instance->_ArrayID);
+	glGenTextures(1, &_instance->_arrays[arrayID]);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, _instance->_arrays[arrayID]);
 	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, width, height, nbLayers + 1);
 
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -181,8 +164,9 @@ void	TextureManager::makeArray(const std::set<std::string> &textureIDs)
 
 	for (auto ID : textureIDs)
 	{
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, getTextureNb(ID), _instance->_textures[ID].width, _instance->_textures[ID].height,
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, depth, _instance->_textures[ID].width, _instance->_textures[ID].height,
 						1, GL_RGBA, GL_UNSIGNED_BYTE, _instance->_textures[ID].data.data());
+		depth ++;
 	}
 
 	glGenerateMipmap(GL_TEXTURE_2D_ARRAY);

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:56:24 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 20:14:08 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 12:44:46 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class AGui
 		virtual void update() = 0;
 		virtual void draw() = 0;
 
-	private:
+	protected:
 		std::string	_id;
 		bool		_isInit = false;
 };

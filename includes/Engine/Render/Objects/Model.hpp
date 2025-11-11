@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 14:06:19 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 17:42:18 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 15:44:56 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <iostream>
 # include <vector>
 # include <map>
-# include <set>
 # include <fstream>
 # include <sstream>
 # include <algorithm>
@@ -80,8 +79,8 @@ struct	Model
 
 	glm::dvec3	getPos() const {return (_pos);}
 
-	void	requestTextures() {TextureManager::requestTextures(_usedTextures);}
-	void	removeRequests() {TextureManager::deleteTextures(_usedTextures);}
+	void	delTextures()								{TextureManager::deleteTextures(_usedTextures);}
+	void	genTextureArray(const std::string &arrayID)	{TextureManager::makeArray(arrayID, _usedTextures);}
 
 	bool					uploaded;
 	std::vector<uint64_t>	vertices;
@@ -107,7 +106,7 @@ struct	Model
 		std::map<std::string, int>	_textures;
 		int							_currentTexture;
 
-		std::set<std::string>	_usedTextures;
+		std::vector<std::string>	_usedTextures;
 
 		GLuint	_VAO = 0, _VBO = 0;
 

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:46:51 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/07 20:29:02 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/08 15:19:17 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include <Engine/Scene/SceneManager.hpp>
 # include <Engine/Scene/Scenes/TitleScreen.hpp>
 # include <Engine/UI_UX/GuiManager.hpp>
-# include <Engine/UI_UX/GUIs/TestGui.hpp>
 
 class Engine
 {
