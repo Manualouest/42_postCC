@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 15:11:24 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/11 13:35:20 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/17 23:54:36 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,14 +189,14 @@ void	Model::addVertex(uint vertexIndex, int textureID = 0, glm::vec2 texture = g
 {
 	(void)texture;
 	
-	vertices.push_back((((uint64_t)(((_rawVertices[vertexIndex].x < 0) << (POS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].x * 100000)) & POS_MASK)) << X_OFFSET) & (X_MASK))
-					 | (((uint64_t)(((_rawVertices[vertexIndex].y < 0) << (POS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].y * 100000)) & POS_MASK)) << Y_OFFSET) & (Y_MASK))
-					 | (((uint64_t)(((_rawVertices[vertexIndex].z < 0) << (POS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].z * 100000)) & POS_MASK))) & (Z_MASK)));
+	vertices.push_back((((uint64_t)(((_rawVertices[vertexIndex].x < 0) << (MPOS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].x * 100000)) & MPOS_MASK)) << MX_OFFSET) & (MX_MASK))
+					 | (((uint64_t)(((_rawVertices[vertexIndex].y < 0) << (MPOS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].y * 100000)) & MPOS_MASK)) << MY_OFFSET) & (MY_MASK))
+					 | (((uint64_t)(((_rawVertices[vertexIndex].z < 0) << (MPOS_SIZE)) | (((uint64_t)glm::abs(_rawVertices[vertexIndex].z * 100000)) & MPOS_MASK))) & (MZ_MASK)));
 
-	vertices.push_back((((uint64_t)normal << N_OFFSET) & N_MASK)
-					 | (((uint64_t)textureID << T_OFFSET) & T_MASK)
-					 | (((uint64_t)(((texture.x < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.x * 1000000.0f)) & TPOS_MASK)) << TX_OFFSET) & (TX_MASK))
-					 | (((uint64_t)(((texture.y < 0) << (TPOS_SIZE)) | (((uint64_t)glm::abs(texture.y * 1000000.0f)) & TPOS_MASK))) & (TY_MASK)));
+	vertices.push_back((((uint64_t)normal << MN_OFFSET) & MN_MASK)
+					 | (((uint64_t)textureID << MT_OFFSET) & MT_MASK)
+					 | (((uint64_t)(((texture.x < 0) << (MTPOS_SIZE)) | (((uint64_t)glm::abs(texture.x * 1000000.0f)) & MTPOS_MASK)) << MTX_OFFSET) & (MTX_MASK))
+					 | (((uint64_t)(((texture.y < 0) << (MTPOS_SIZE)) | (((uint64_t)glm::abs(texture.y * 1000000.0f)) & MTPOS_MASK))) & (MTY_MASK)));
 }
 
 void	Model::computeUvs(int indexes[4][3], glm::vec2 text[4], int nbElem)

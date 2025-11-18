@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 08:05:33 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/12 11:13:59 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/18 20:11:57 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,10 +124,14 @@ void	Window::startFrame()
 {
 	_checkInstance();
 
+	glfwPollEvents();
+
+	glfwGetWindowSize(_instance->_windowData, &WWIDTH, &WHEIGHT);
+	glViewport(0, 0, WWIDTH, WHEIGHT);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	_instance->_frameTime = glfwGetTime();
 	_instance->_deltaTime = _instance->_frameTime - _instance->_lastFrameTime;
-	glfwPollEvents();
 }
 
 void	Window::endFrame()

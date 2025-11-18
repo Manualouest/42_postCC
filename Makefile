@@ -24,7 +24,8 @@ SRC =	main.cpp \
 		Engine/Scene/SceneManager.cpp \
 		Engine/Scene/Scenes/TitleScreen.cpp \
 		Engine/UI_UX/GuiManager.cpp \
-		Engine/UI_UX/Guis/TestGui.cpp
+		Engine/UI_UX/Guis/TestGui.cpp \
+		Game/Chunk/Chunk.cpp
 
 OBJDIR = obj/
 
@@ -136,4 +137,4 @@ re: fclean all
 
 .PHONY: all glfw glad glm clean fclean re cleanlibs
 
--include $(DEPS)%
+-include $(DEPS)

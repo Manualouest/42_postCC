@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 14:06:19 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/08 15:44:56 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/17 23:54:36 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,32 +37,33 @@
 
 
 // ---- These Masks are also used for the normals.
-# define X_MASK 0b0111111111111111111111000000000000000000000000000000000000000000 // ┳> value is multiplied by 1~~~~
-# define Y_MASK 0b0000000000000000000000111111111111111111111000000000000000000000 // ┣> giving a range of [-~;~]
-# define Z_MASK 0b0000000000000000000000000000000000000000000111111111111111111111 // ┗> with 0.~~~~ precision
-# define POS_MASK 0b0000000000000000000000000000000000000000000011111111111111111111
+# define MX_MASK 0b0111111111111111111111000000000000000000000000000000000000000000 // ┳> value is multiplied by 1~~~~
+# define MY_MASK 0b0000000000000000000000111111111111111111111000000000000000000000 // ┣> giving a range of [-~;~]
+# define MZ_MASK 0b0000000000000000000000000000000000000000000111111111111111111111 // ┗> with 0.~~~~ precision
+# define MPOS_MASK 0b0000000000000000000000000000000000000000000011111111111111111111
 // 		┗> For the normals the values go from -1 to 1 with 0.000001 precision
 
-# define N_MASK 0b1111111111000000000000000000000000000000000000000000000000000000 // -> normal index in the big table of the 900 different pre-baked values (allows 12d turns)
-# define T_MASK 0b0000000000111111000000000000000000000000000000000000000000000000 // -> 32 textures in the atlas (can be increased)
-# define TX_MASK 0b0000000000000000111111111111111111111111000000000000000000000000 // ┳> value multiplied by 100000000
-# define TY_MASK 0b0000000000000000000000000000000000000000111111111111111111111111 // ┗> with max [-15;15] and 0.00000001 precision
-# define TPOS_MASK 0b0000000000000000000000000000000000000000011111111111111111111111 // ┗> with max [-15;15] and 0.00000001 precision
+# define MN_MASK 0b1111111111000000000000000000000000000000000000000000000000000000 // -> normal index in the big table of the 900 different pre-baked values (allows 12d turns)
+# define MT_MASK 0b0000000000111111000000000000000000000000000000000000000000000000 // -> 32 textures in the atlas (can be increased)
+# define MTX_MASK 0b0000000000000000111111111111111111111111000000000000000000000000 // ┳> value multiplied by 100000000
+# define MTY_MASK 0b0000000000000000000000000000000000000000111111111111111111111111 // ┗> with max [-15;15] and 0.00000001 precision
+# define MTPOS_MASK 0b0000000000000000000000000000000000000000011111111111111111111111 // ┗> with max [-15;15] and 0.00000001 precision
 
-# define X_OFFSET 42 // -> the offsets for the masks above
-# define Y_OFFSET 21 // -> the offsets for the masks above
-# define POS_SIZE 20 // -> the offsets for the masks above
-# define TPOS_SIZE 23 // -> the offsets for the masks above
+# define MX_OFFSET 42 // -> the offsets for the masks above
+# define MY_OFFSET 21 // -> the offsets for the masks above
+# define MPOS_SIZE 20 // -> the offsets for the masks above
+# define MTPOS_SIZE 23 // -> the offsets for the masks above
 
-# define N_OFFSET 54 // -> the offsets for the masks above
-# define T_OFFSET 48 // -> the offsets for the masks above
-# define TX_OFFSET 24 // -> the offsets for the masks above
+# define MN_OFFSET 54 // -> the offsets for the masks above
+# define MT_OFFSET 48 // -> the offsets for the masks above
+# define MTX_OFFSET 24 // -> the offsets for the masks above
 
 
 struct	Model
 {
 	Model(){;}
 	Model(const std::string &path);
+	~Model() {remove();}
 
 	void	draw();
 	void	unload();

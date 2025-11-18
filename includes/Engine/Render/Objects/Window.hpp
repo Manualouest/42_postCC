@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 07:58:45 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/05 09:00:49 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/18 22:14:03 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ class Window
 
 		static void	startFrame();
 		static void	endFrame();
-
 
 	private:
 		static void	_checkInstance();

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:11:36 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/05 12:47:43 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/18 23:28:22 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ class	CameraManager
 		static CameraManager	*_instance;
 
 		float		_yaw = 270.f;
-		float		_pitch = 0.f;
-		glm::vec3	_pos = {0.f, 0.f, 100.f};
+		float		_pitch = -89.f;
+		glm::vec3	_pos = {0.f, 150.f, 0.f};
 
 		float	_fov = glm::radians(80.f);
 		float	_aspectRation = 1; // 1080 / 1080
