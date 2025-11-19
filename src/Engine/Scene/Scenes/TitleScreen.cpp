@@ -6,14 +6,17 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 12:34:50 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 12:41:25 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 21:05:54 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Engine/Scene/Scenes/TitleScreen.hpp>
 
-const int clustersize = 50;
+const int clustersize = 10;
 const int nbchunks = clustersize * clustersize;
+
+float startLOD = 0.25;
+float currentLOD = 1;
 
 Chunk	chunkTest[nbchunks];
 int		x = 0;
@@ -55,6 +58,26 @@ void	TitleScreen::processInputs()
 	}
 	if (Window::getPressInput(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(Window::getWindowData(), GLFW_TRUE);
+
+
+	if (Window::getPressInput(GLFW_KEY_KP_ADD))
+	{
+		if (currentLOD < 32)
+		{
+			currentLOD *= 2;
+			chunkTest[0].regenerate(currentLOD);
+		}
+	}
+	if (Window::getPressInput(GLFW_KEY_KP_SUBTRACT))
+	{
+		if (currentLOD > startLOD)
+		{
+			currentLOD /= 2;
+			PRINT "LOD DOWN" ENDL;
+			chunkTest[0].regenerate(currentLOD);
+		}
+	}
+
 }
 
 void	TitleScreen::update()
@@ -81,7 +104,7 @@ void	TitleScreen::draw()
 		// if ((x + y) % 6 == 5)
 		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 4, 32);
 		// else if ((x + y) % 6 == 4)
-			chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 1, 32);
+			chunkTest[y * clustersize + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD);
 		// else if ((x + y) % 6 == 3)
 		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.5, 32);
 		// else if ((x + y) % 6 == 2)
@@ -100,10 +123,14 @@ void	TitleScreen::draw()
 				y = -1;
 		}
 	}
-	else
-	{
-		
-	}
+	// else
+	// {
+	// 	if (y == -1)
+	// 	{
+	// 		chunkTest[0].regenerate(2);
+	// 		y --;
+	// 	}
+	// }
 
 	for (int i = 0; i < nbchunks; ++i)
 		chunkTest[i].draw();

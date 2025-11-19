@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 20:40:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 12:39:10 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 21:06:46 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,10 @@ class Chunk
 		void	upload();
 		void	remove();
 
-		void	regenerate(const float &blocksize, const float &chunksize) {remove(); generate(_pos, blocksize, chunksize);}
+		void	regenerate(const float &targetSize) {unload(); _usedBlocksize = targetSize; _LOD = _usedBlocksize / BLOCKSIZE; PRINT _usedBlocksize AND "; " AND _LOD ENDL; _genVertices();}
 		void	generate(const glm::vec2 &pos) {generate(pos, DEFAULT_BLOCKSIZE, DEFAULT_CHUNKSIZE);}
-		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize);
+		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize) {generate(pos, blocksize, chunksize, 1);}
+		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize, const float &targetSize);
 
 		static float	BLOCKSIZE;
 		static float	CHUNKSIZE;
@@ -73,7 +74,7 @@ class Chunk
 		float	_genHeight(const glm::vec2 &pos);
 		void	_addVertex(const glm::dvec3 &pos, const uint64_t &normID);
 		void	_genLayers();
-		void	_genBuffers();
+		void	_genVertices();
 
 		bool	_uploaded = false;
 		bool	_generated = false;
@@ -81,10 +82,14 @@ class Chunk
 		GLuint	_VAO = 0;
 		GLuint	_VBO = 0;
 
+		float	_usedBlocksize;
+		float	_LOD;
+
 		glm::vec2	_pos;
 		glm::mat4	_matrice;
 
 		std::map<float, Layer>	_RawLayers;
+		std::vector<float>		_RawChunk;
 		std::vector<uint64_t>	_vertices;
 };
 

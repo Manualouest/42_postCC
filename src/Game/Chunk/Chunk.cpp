@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 22:55:29 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 12:36:35 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 21:08:47 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ void	Chunk::remove()
 	_nbVertices = 0;
 }
 
-void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize)
+void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize, const float &targetSize)
 {
 	if (_generated)
 		return;
@@ -216,12 +216,17 @@ void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &
 	// Chunk::CHUNKSIZE = chunksize;
 	Chunk::CHUNKSIZE = chunksize / blocksize;
 
+	_usedBlocksize = targetSize;
+	_LOD = _usedBlocksize / Chunk::BLOCKSIZE;
+
 	_pos = pos;
 	_matrice = glm::translate(glm::mat4(1.f), {pos.x, 0, pos.y});
 	// _matrice = glm::mat4(1.f);
 
+	_RawChunk.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);
+
 	_genLayers();
-	_genBuffers();
+	_genVertices();
 
 	_generated = true;
 }
@@ -260,7 +265,8 @@ void	Chunk::_genLayers()
 		{
 			// PRERR Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE) AND "; " AND y * Chunk::CHUNKSIZE + x AND "; " AND Chunk::CHUNKSIZE ENDL;
 			float	height = Increment((calcNoise({y * Chunk::BLOCKSIZE + _pos.y, x * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
-			_RawLayers[height].blocks[y * Chunk::CHUNKSIZE + x] = 1;
+			_RawChunk[y * Chunk::CHUNKSIZE + x] = height;
+			// _RawLayers[height].blocks[y * Chunk::CHUNKSIZE + x] = 1;
 		}
 	}
 }
@@ -296,21 +302,116 @@ void	Chunk::_addVertex(const glm::dvec3 &pos, const uint64_t &normID)
 
 
 
-void	Chunk::_genBuffers()
+void	Chunk::_genVertices()
 {
+
 	// offsets for the cube's edges: NO MORE MAGIC VECTORS
-	glm::dvec3 V1 = glm::dvec3(0, Chunk::BLOCKSIZE, Chunk::BLOCKSIZE);
-	glm::dvec3 V2 = glm::dvec3(Chunk::BLOCKSIZE, Chunk::BLOCKSIZE, Chunk::BLOCKSIZE);
-	glm::dvec3 V3 = glm::dvec3(Chunk::BLOCKSIZE, Chunk::BLOCKSIZE, 0);
-	glm::dvec3 V4 = glm::dvec3(0, Chunk::BLOCKSIZE, 0);
-	glm::dvec3 V5 = glm::dvec3(0, 0, Chunk::BLOCKSIZE);
-	glm::dvec3 V6 = glm::dvec3(Chunk::BLOCKSIZE, 0, Chunk::BLOCKSIZE);
-	glm::dvec3 V7 = glm::dvec3(Chunk::BLOCKSIZE, 0, 0);
+	glm::dvec3 V1 = glm::dvec3(0, _usedBlocksize, _usedBlocksize);
+	glm::dvec3 V2 = glm::dvec3(_usedBlocksize, _usedBlocksize, _usedBlocksize);
+	glm::dvec3 V3 = glm::dvec3(_usedBlocksize, _usedBlocksize, 0);
+	glm::dvec3 V4 = glm::dvec3(0, _usedBlocksize, 0);
+	glm::dvec3 V5 = glm::dvec3(0, 0, _usedBlocksize);
+	glm::dvec3 V6 = glm::dvec3(_usedBlocksize, 0, _usedBlocksize);
+	glm::dvec3 V7 = glm::dvec3(_usedBlocksize, 0, 0);
 	glm::dvec3 V8 = glm::dvec3(0, 0, 0);
+
+	_vertices.clear();
+	_vertices.shrink_to_fit();
+	_nbVertices = 0;
 
 	float	min = _RawLayers.begin()->first;
 
-	for (auto layer : _RawLayers)
+	float	x = 0;
+	float	counter = 0;
+	float	z = 0;
+
+	for (int i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / _LOD; i += _LOD)
+	{
+		glm::dvec3 pos = glm::dvec3(
+			x,
+			_RawChunk[i] - (_LOD * Chunk::BLOCKSIZE),
+			z
+		);
+
+
+		// top face
+		_addVertex(pos + V1, TOP);
+		_addVertex(pos + V2, TOP);
+		_addVertex(pos + V3, TOP);
+
+		_addVertex(pos + V1, TOP);
+		_addVertex(pos + V3, TOP);
+		_addVertex(pos + V4, TOP);
+
+
+		// side faces
+		_addVertex(pos + V1, WEST);
+		_addVertex(pos + V4, WEST);
+		_addVertex(pos + V8, WEST);
+	
+		_addVertex(pos + V1, WEST);
+		_addVertex(pos + V8, WEST);
+		_addVertex(pos + V5, WEST);
+
+
+		_addVertex(pos + V2, NORTH);
+		_addVertex(pos + V1, NORTH);
+		_addVertex(pos + V5, NORTH);
+	
+		_addVertex(pos + V2, NORTH);
+		_addVertex(pos + V5, NORTH);
+		_addVertex(pos + V6, NORTH);
+
+
+		_addVertex(pos + V3, EAST);
+		_addVertex(pos + V2, EAST);
+		_addVertex(pos + V6, EAST);
+	
+		_addVertex(pos + V3, EAST);
+		_addVertex(pos + V6, EAST);
+		_addVertex(pos + V7, EAST);
+
+
+		_addVertex(pos + V4, SOUTH);
+		_addVertex(pos + V3, SOUTH);
+		_addVertex(pos + V7, SOUTH);
+	
+		_addVertex(pos + V4, SOUTH);
+		_addVertex(pos + V7, SOUTH);
+		_addVertex(pos + V8, SOUTH);
+
+
+		// bot
+		_addVertex(pos + V5, BOT);
+		_addVertex(pos + V6, BOT);
+		_addVertex(pos + V7, BOT);
+		
+		_addVertex(pos + V5, BOT);
+		_addVertex(pos + V7, BOT);
+		_addVertex(pos + V8, BOT);
+
+
+		x += _usedBlocksize;
+		counter += _LOD;
+		if (counter >= Chunk::CHUNKSIZE)
+		{
+			x = 0;
+			counter = 0;
+			z += _usedBlocksize;
+		}
+	}
+
+	_nbVertices = _vertices.size();
+
+	_RawLayers.clear();
+}
+
+
+
+
+
+/*
+for (auto layer : _RawLayers)
 	{
 		float	x = 0;
 		float	y = 0;
@@ -318,7 +419,7 @@ void	Chunk::_genBuffers()
 		int		counter = 0;
 		uint8_t	*blocks = layer.second.blocks.data();
 		// for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE); ++i)
-		for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE; ++i)
+		for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE; i += _LOD)
 		{
 			if (blocks[i])
 			{
@@ -375,93 +476,23 @@ void	Chunk::_genBuffers()
 				_addVertex(pos + V8, SOUTH);
 
 
-				// if (layer.first == min)
-				// {
-					_addVertex(pos + V5, BOT);
-					_addVertex(pos + V6, BOT);
-					_addVertex(pos + V7, BOT);
+				// bot
+				_addVertex(pos + V5, BOT);
+				_addVertex(pos + V6, BOT);
+				_addVertex(pos + V7, BOT);
 				
-					_addVertex(pos + V5, BOT);
-					_addVertex(pos + V7, BOT);
-					_addVertex(pos + V8, BOT);
-				// }
-
-
-				// if (layer.first > min)
-				// {
-				// 	y = layer.first - Chunk::BLOCKSIZE;
-				// 	while (y >= min)
-				// 	{
-				// 		glm::dvec3 pos = glm::dvec3(
-				// 			x,
-				// 			y,
-				// 			z
-				// 		);
-
-				// 		_addVertex(pos + V1);
-				// 		_addVertex(pos + V4);
-				// 		_addVertex(pos + V8);
-					
-				// 		_addVertex(pos + V1);
-				// 		_addVertex(pos + V8);
-				// 		_addVertex(pos + V5);
-
-
-				// 		_addVertex(pos + V2);
-				// 		_addVertex(pos + V1);
-				// 		_addVertex(pos + V5);
-					
-				// 		_addVertex(pos + V2);
-				// 		_addVertex(pos + V5);
-				// 		_addVertex(pos + V6);
-
-
-				// 		_addVertex(pos + V3);
-				// 		_addVertex(pos + V2);
-				// 		_addVertex(pos + V6);
-					
-				// 		_addVertex(pos + V3);
-				// 		_addVertex(pos + V6);
-				// 		_addVertex(pos + V7);
-
-
-				// 		_addVertex(pos + V4);
-				// 		_addVertex(pos + V3);
-				// 		_addVertex(pos + V7);
-					
-				// 		_addVertex(pos + V4);
-				// 		_addVertex(pos + V7);
-				// 		_addVertex(pos + V8);
-
-
-				// 		if (y == min)
-				// 		{
-				// 			_addVertex(pos + V5);
-				// 			_addVertex(pos + V6);
-				// 			_addVertex(pos + V7);
-						
-				// 			_addVertex(pos + V5);
-				// 			_addVertex(pos + V7);
-				// 			_addVertex(pos + V8);
-				// 		}
-
-				// 		y -= Chunk::BLOCKSIZE;
-				// 	}
-				// }
+				_addVertex(pos + V5, BOT);
+				_addVertex(pos + V7, BOT);
+				_addVertex(pos + V8, BOT);
 
 			}
-			x += Chunk::BLOCKSIZE;
-			counter ++;
+			x += _usedBlocksize;
+			counter += _LOD;
 			if (counter == Chunk::CHUNKSIZE)
 			{
 				x = 0;
 				counter = 0;
-				z += Chunk::BLOCKSIZE;
+				z += _usedBlocksize;
 			}
 		}
-	}
-
-	_nbVertices = _vertices.size();
-
-	_RawLayers.clear();
-}
+	}*/
