@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 22:55:29 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 23:26:17 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:36:35 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,106 +15,9 @@
 float	Chunk::CHUNKSIZE = DEFAULT_CHUNKSIZE;
 float	Chunk::BLOCKSIZE = DEFAULT_BLOCKSIZE;
 
-Chunk::Chunk()
-{
-}
-
-Chunk::~Chunk()
-{
-	remove();
-}
-
-void	Chunk::draw()
-{
-	if (!_generated)
-		return ;
-
-	if (!_uploaded)
-		upload();
-
-	ShaderManager::setMat4("model", _matrice);
-
-	// PRINT _nbVertices ENDL;
-
-	glBindVertexArray(_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, _nbVertices);
-	glBindVertexArray(0);
-}
-
-void	Chunk::unload()
-{
-	if (!_generated)
-		return ;
-
-	_uploaded = false;
-	if (_VBO)
-		glDeleteBuffers(1, &_VBO);
-	_VBO = 0;
-	if (_VAO)
-		glDeleteVertexArrays(1, &_VAO);
-	_VAO = 0;
-}
-
-void	Chunk::upload()
-{
-	if (!_generated)
-		return ;
-
-	if (_VAO <= 0)
-		glGenVertexArrays(1, &_VAO);
-	if (_VBO <= 0)
-    	glGenBuffers(1, &_VBO);
-
-	glBindVertexArray(_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(uint64_t), _vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribLPointer(0, 1, GL_DOUBLE, sizeof(uint64_t), (void*)0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);	
-
-	_uploaded = true;
-}
-
-void	Chunk::remove()
-{
-	_uploaded = false;
-	_generated = false;
-
-	if (_VBO)
-		glDeleteBuffers(1, &_VBO);
-	_VBO = 0;
-	if (_VAO)
-		glDeleteVertexArrays(1, &_VAO);
-	_VAO = 0;
-
-	_RawLayers.clear();
-	_vertices.clear();
-	_vertices.shrink_to_fit();
-	_nbVertices = 0;
-}
-
-void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize)
-{
-	if (_generated)
-		return;
-
-	Chunk::BLOCKSIZE = blocksize;
-	Chunk::CHUNKSIZE = chunksize;
-
-	_pos = pos;
-	_matrice = glm::translate(glm::mat4(1.f), {pos.x, 0, pos.y});
-	// _matrice = glm::mat4(1.f);
-
-	_genLayers();
-	_genBuffers();
-
-	_generated = true;
-}
 
 // ========================== Since no noise yet =========================
+
 
 float	noiseMapSize = 2;
 int		noiseMap[2][2] = {
@@ -217,11 +120,112 @@ float	calcNoise(const glm::vec2 &pos, float freq, float amp, int noisiness)
 	return (res);
 }
 
-
-
-
-
 // =======================================================================
+
+
+Chunk::Chunk()
+{
+}
+
+Chunk::~Chunk()
+{
+	remove();
+}
+
+void	Chunk::draw()
+{
+	if (!_generated)
+		return ;
+
+	if (!_uploaded)
+		upload();
+
+	ShaderManager::setMat4("model", _matrice);
+
+	// PRINT _nbVertices ENDL;
+
+	glBindVertexArray(_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, _nbVertices);
+	glBindVertexArray(0);
+}
+
+void	Chunk::unload()
+{
+	if (!_generated)
+		return ;
+
+	_uploaded = false;
+	if (_VBO)
+		glDeleteBuffers(1, &_VBO);
+	_VBO = 0;
+	if (_VAO)
+		glDeleteVertexArrays(1, &_VAO);
+	_VAO = 0;
+}
+
+void	Chunk::upload()
+{
+	if (!_generated)
+		return ;
+
+	if (_VAO <= 0)
+		glGenVertexArrays(1, &_VAO);
+	if (_VBO <= 0)
+    	glGenBuffers(1, &_VBO);
+
+	glBindVertexArray(_VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(uint64_t), _vertices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribLPointer(0, 1, GL_DOUBLE, sizeof(uint64_t), (void*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);	
+
+	_vertices.clear();
+	_vertices.shrink_to_fit();
+
+	_uploaded = true;
+}
+
+void	Chunk::remove()
+{
+	_uploaded = false;
+	_generated = false;
+
+	if (_VBO)
+		glDeleteBuffers(1, &_VBO);
+	_VBO = 0;
+	if (_VAO)
+		glDeleteVertexArrays(1, &_VAO);
+	_VAO = 0;
+
+	_RawLayers.clear();
+	_vertices.clear();
+	_vertices.shrink_to_fit();
+	_nbVertices = 0;
+}
+
+void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize)
+{
+	if (_generated)
+		return;
+
+	Chunk::BLOCKSIZE = blocksize;
+	// Chunk::CHUNKSIZE = chunksize;
+	Chunk::CHUNKSIZE = chunksize / blocksize;
+
+	_pos = pos;
+	_matrice = glm::translate(glm::mat4(1.f), {pos.x, 0, pos.y});
+	// _matrice = glm::mat4(1.f);
+
+	_genLayers();
+	_genBuffers();
+
+	_generated = true;
+}
+
 
 float Increment(int dec, int inc)
 {
@@ -231,34 +235,45 @@ float Increment(int dec, int inc)
 
 void	Chunk::_genLayers()
 {
+	// for (int y = 0; y < Chunk::CHUNKSIZE; ++y)
+	// {
+	// 	float By = y / Chunk::BLOCKSIZE;
+	// 	for (int x = 0; x < Chunk::CHUNKSIZE; ++x)
+	// 	{
+	// 		float Bx = x / Chunk::BLOCKSIZE;
+	// 		for (int yo = 0; yo < 1 / Chunk::BLOCKSIZE; ++yo)
+	// 		{
+	// 			float ByyoCB = (By + yo) * (Chunk::CHUNKSIZE / Chunk::BLOCKSIZE);
+	// 			for (int xo = 0; xo < 1 / Chunk::BLOCKSIZE; ++xo)
+	// 			{
+	// 				float	height = Increment((calcNoise({y + yo * Chunk::BLOCKSIZE + _pos.y, x + xo * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
+
+	// 				_RawLayers[height].blocks[ByyoCB + (Bx + xo)] = 1;
+	// 			}
+	// 		}
+	// 	}
+	// }
+
 	for (int y = 0; y < Chunk::CHUNKSIZE; ++y)
 	{
-		float By = y / Chunk::BLOCKSIZE;
 		for (int x = 0; x < Chunk::CHUNKSIZE; ++x)
 		{
-			float Bx = x / Chunk::BLOCKSIZE;
-			for (int yo = 0; yo < 1 / Chunk::BLOCKSIZE; ++yo)
-			{
-				float ByyoCB = (By + yo) * (Chunk::CHUNKSIZE / Chunk::BLOCKSIZE);
-				for (int xo = 0; xo < 1 / Chunk::BLOCKSIZE; ++xo)
-				{
-					float	height = Increment((calcNoise({y + yo * Chunk::BLOCKSIZE + _pos.y, x + xo * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
-
-					_RawLayers[height].blocks[ByyoCB + (Bx + xo)] = 1;
-				}
-			}
+			// PRERR Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE) AND "; " AND y * Chunk::CHUNKSIZE + x AND "; " AND Chunk::CHUNKSIZE ENDL;
+			float	height = Increment((calcNoise({y * Chunk::BLOCKSIZE + _pos.y, x * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
+			_RawLayers[height].blocks[y * Chunk::CHUNKSIZE + x] = 1;
 		}
 	}
 }
 
-void	Chunk::_addVertex(const glm::dvec3 &pos)
+void	Chunk::_addVertex(const glm::dvec3 &pos, const uint64_t &normID)
 {
 	glm::dvec3 realPos = pos;
 
 	// PRINT "[" AND pos.x AND "; " AND realPos.x AND "];	[" AND pos.y AND "; " AND realPos.y AND "];	[" AND pos.z AND ";" AND realPos.z AND "]" ENDL;
 
 	_vertices.push_back(
-		(uint64_t)(realPos.x * 100) << CX_OFFSET
+		normID << CN_OFFSET
+		| (uint64_t)(realPos.x * 100) << CX_OFFSET
 		| (uint64_t)(realPos.y * 100) << CY_OFFSET
 		| (uint64_t)(realPos.z * 100)
 	);
@@ -271,7 +286,13 @@ void	Chunk::_addVertex(const glm::dvec3 &pos)
 //    │.      │/                 S
 //    8_______7
 
-
+// normals:
+// 	vec3 (0, 1, 0)	TOP
+// 	vec3 (0, -1, 0)	BOT
+// 	vec3 (-1, 0, 0)	WEST
+// 	vec3 (1, 0, 0)	EAST
+// 	vec3 (0, 0, 1)	NORTH
+// 	vec3 (0, 0, -1)	SOUTH
 
 
 
@@ -296,7 +317,8 @@ void	Chunk::_genBuffers()
 		float	z = 0;
 		int		counter = 0;
 		uint8_t	*blocks = layer.second.blocks.data();
-		for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE); ++i)
+		// for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE); ++i)
+		for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE; ++i)
 		{
 			if (blocks[i])
 			{
@@ -307,61 +329,61 @@ void	Chunk::_genBuffers()
 				);
 
 				// top face
-				_addVertex(pos + V1);
-				_addVertex(pos + V2);
-				_addVertex(pos + V3);
+				_addVertex(pos + V1, TOP);
+				_addVertex(pos + V2, TOP);
+				_addVertex(pos + V3, TOP);
 
-				_addVertex(pos + V1);
-				_addVertex(pos + V3);
-				_addVertex(pos + V4);
+				_addVertex(pos + V1, TOP);
+				_addVertex(pos + V3, TOP);
+				_addVertex(pos + V4, TOP);
 
 
 				// side faces
-				_addVertex(pos + V1);
-				_addVertex(pos + V4);
-				_addVertex(pos + V8);
+				_addVertex(pos + V1, WEST);
+				_addVertex(pos + V4, WEST);
+				_addVertex(pos + V8, WEST);
 			
-				_addVertex(pos + V1);
-				_addVertex(pos + V8);
-				_addVertex(pos + V5);
+				_addVertex(pos + V1, WEST);
+				_addVertex(pos + V8, WEST);
+				_addVertex(pos + V5, WEST);
 
 
-				_addVertex(pos + V2);
-				_addVertex(pos + V1);
-				_addVertex(pos + V5);
+				_addVertex(pos + V2, NORTH);
+				_addVertex(pos + V1, NORTH);
+				_addVertex(pos + V5, NORTH);
 			
-				_addVertex(pos + V2);
-				_addVertex(pos + V5);
-				_addVertex(pos + V6);
+				_addVertex(pos + V2, NORTH);
+				_addVertex(pos + V5, NORTH);
+				_addVertex(pos + V6, NORTH);
 
 
-				_addVertex(pos + V3);
-				_addVertex(pos + V2);
-				_addVertex(pos + V6);
+				_addVertex(pos + V3, EAST);
+				_addVertex(pos + V2, EAST);
+				_addVertex(pos + V6, EAST);
 			
-				_addVertex(pos + V3);
-				_addVertex(pos + V6);
-				_addVertex(pos + V7);
+				_addVertex(pos + V3, EAST);
+				_addVertex(pos + V6, EAST);
+				_addVertex(pos + V7, EAST);
 
 
-				_addVertex(pos + V4);
-				_addVertex(pos + V3);
-				_addVertex(pos + V7);
+				_addVertex(pos + V4, SOUTH);
+				_addVertex(pos + V3, SOUTH);
+				_addVertex(pos + V7, SOUTH);
 			
-				_addVertex(pos + V4);
-				_addVertex(pos + V7);
-				_addVertex(pos + V8);
+				_addVertex(pos + V4, SOUTH);
+				_addVertex(pos + V7, SOUTH);
+				_addVertex(pos + V8, SOUTH);
 
 
 				// if (layer.first == min)
 				// {
-					_addVertex(pos + V5);
-					_addVertex(pos + V6);
-					_addVertex(pos + V7);
+					_addVertex(pos + V5, BOT);
+					_addVertex(pos + V6, BOT);
+					_addVertex(pos + V7, BOT);
 				
-					_addVertex(pos + V5);
-					_addVertex(pos + V7);
-					_addVertex(pos + V8);
+					_addVertex(pos + V5, BOT);
+					_addVertex(pos + V7, BOT);
+					_addVertex(pos + V8, BOT);
 				// }
 
 
@@ -430,7 +452,7 @@ void	Chunk::_genBuffers()
 			}
 			x += Chunk::BLOCKSIZE;
 			counter ++;
-			if (counter == Chunk::CHUNKSIZE / Chunk::BLOCKSIZE)
+			if (counter == Chunk::CHUNKSIZE)
 			{
 				x = 0;
 				counter = 0;
@@ -440,4 +462,6 @@ void	Chunk::_genBuffers()
 	}
 
 	_nbVertices = _vertices.size();
+
+	_RawLayers.clear();
 }

@@ -6,16 +6,18 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 12:34:50 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 23:31:25 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:41:25 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Engine/Scene/Scenes/TitleScreen.hpp>
 
-const int clustersize = 6;
+const int clustersize = 50;
 const int nbchunks = clustersize * clustersize;
 
 Chunk	chunkTest[nbchunks];
+int		x = 0;
+int		y = 0;
 
 void	TitleScreen::init()
 {
@@ -23,15 +25,6 @@ void	TitleScreen::init()
 		return ;
 
 	ShaderManager::addShader("chunk", "assets/shaders/chunk");
-
-	for (int y = 0; y < clustersize; ++y)
-	{
-		for (int x = 0; x < clustersize; ++x)
-		{
-			chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.25, 32);
-		}
-	}
-
 
 	_isInit = true;
 }
@@ -81,6 +74,36 @@ void	TitleScreen::draw()
 
 	ShaderManager::bindShader("chunk");
 	CameraManager::setViewProjMatrix();
+	
+	if (y >= 0)
+	{
+		// PRERR x AND "; " AND y AND "; " AND y * clustersize + x ENDL;
+		// if ((x + y) % 6 == 5)
+		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 4, 32);
+		// else if ((x + y) % 6 == 4)
+			chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 1, 32);
+		// else if ((x + y) % 6 == 3)
+		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.5, 32);
+		// else if ((x + y) % 6 == 2)
+		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.25, 32);
+		// else if ((x + y) % 6 == 1)
+		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.2, 32);
+		// else
+		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.1, 32);
+
+		x ++;
+		if (x == clustersize)
+		{
+			x = 0;
+			y ++;
+			if (y == (clustersize))
+				y = -1;
+		}
+	}
+	else
+	{
+		
+	}
 
 	for (int i = 0; i < nbchunks; ++i)
 		chunkTest[i].draw();

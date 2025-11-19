@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 20:40:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 22:39:14 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:39:10 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@
 
 struct Layer;
 
+enum Normals
+{
+	TOP,
+	BOT,
+	WEST,
+	EAST,
+	NORTH,
+	SOUTH
+};
+
 class Chunk
 {
 	public:
@@ -52,6 +62,7 @@ class Chunk
 		void	upload();
 		void	remove();
 
+		void	regenerate(const float &blocksize, const float &chunksize) {remove(); generate(_pos, blocksize, chunksize);}
 		void	generate(const glm::vec2 &pos) {generate(pos, DEFAULT_BLOCKSIZE, DEFAULT_CHUNKSIZE);}
 		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize);
 
@@ -60,7 +71,7 @@ class Chunk
 
 	private:
 		float	_genHeight(const glm::vec2 &pos);
-		void	_addVertex(const glm::dvec3 &pos);
+		void	_addVertex(const glm::dvec3 &pos, const uint64_t &normID);
 		void	_genLayers();
 		void	_genBuffers();
 
@@ -79,7 +90,8 @@ class Chunk
 
 struct Layer
 {
-	Layer() {blocks.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE), 0);}
+	Layer() {blocks.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);} // / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE)
+	~Layer() {blocks.clear(); blocks.shrink_to_fit();}
 
 	std::vector<uint8_t>	blocks;
 };

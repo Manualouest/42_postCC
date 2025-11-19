@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:49:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/17 15:40:20 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:27:46 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	CameraManager::selfUpdate()
 {
 	_checkInstance();
 
-	_instance->_aspectRation = WWIDTH / WHEIGHT;
 	setYaw(_instance->_yaw + _instance->_sensi * (Window::getMousePosX() - (WWIDTH / 2.f)) / (float)WWIDTH);
 	setPitch(_instance->_pitch - _instance->_sensi * (Window::getMousePosY() - (WHEIGHT / 2.f)) / (float)WHEIGHT);
 	update();
@@ -71,6 +70,11 @@ glm::mat4	CameraManager::getViewMatrix()
 
 void	CameraManager::_updatePos()
 {
+	if (Window::getRepeatInput(GLFW_KEY_LEFT_SHIFT))
+		_speed = 10. * Window::getDeltaTime();
+	else
+		_speed = 1 * Window::getDeltaTime();
+
 	if (Window::getRepeatInput(GLFW_KEY_W))
 		_pos += _direction * _speed;
 	if (Window::getRepeatInput(GLFW_KEY_S))
@@ -84,11 +88,6 @@ void	CameraManager::_updatePos()
 		_pos += _worldUp * _speed;
 	if (Window::getRepeatInput(GLFW_KEY_LEFT_ALT))
 		_pos += -_worldUp * _speed;
-	
-	if (Window::getRepeatInput(GLFW_KEY_LEFT_SHIFT))
-		_speed = 10.;
-	else
-		_speed = 0.5;
 }
 
 void	CameraManager::_checkInstance()

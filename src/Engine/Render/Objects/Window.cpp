@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 08:05:33 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 20:11:57 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:29:12 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,13 +126,15 @@ void	Window::startFrame()
 
 	glfwPollEvents();
 
-	glfwGetWindowSize(_instance->_windowData, &WWIDTH, &WHEIGHT);
-	glViewport(0, 0, WWIDTH, WHEIGHT);
+	// glfwGetWindowSize(_instance->_windowData, &WWIDTH, &WHEIGHT);
+	// glViewport(0, 0, WWIDTH, WHEIGHT);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	_instance->_frameTime = glfwGetTime();
 	_instance->_deltaTime = _instance->_frameTime - _instance->_lastFrameTime;
 }
+
+#include <sstream>
 
 void	Window::endFrame()
 {
@@ -145,6 +147,11 @@ void	Window::endFrame()
 		_instance->_running = false;
 
 	_instance->_lastFrameTime = _instance->_frameTime;
+
+	std::stringstream	fps;
+	fps << "fps: ";
+	fps << (1 / _instance->_deltaTime);
+	glfwSetWindowTitle(_instance->_windowData, fps.str().c_str());
 }
 
 void	Window::_checkInstance()
@@ -165,6 +172,7 @@ void	Window::_resize(GLFWwindow *window, int width, int height)
 	(void)window;
 
 	glViewport(0, 0, width, height);
+	CameraManager::setAspectRation((float)width / (float)height);
 	WWIDTH = width;
 	WHEIGHT = height;
 }

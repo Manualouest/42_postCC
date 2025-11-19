@@ -1,6 +1,7 @@
 #version 330 core
 #extension GL_ARB_gpu_shader_int64 : enable
 
+uint64_t N_MASK = 7u;
 uint64_t X_MASK = 4095u;
 uint64_t Y_MASK = 32767u;
 uint64_t Z_MASK = 4095u;
@@ -23,15 +24,29 @@ uniform mat4	model;
 out vec3	Opos;
 out vec3	Onormal;
 
-void	decodePos()
+
+vec3 Normals[6] = vec3[](
+	vec3 (0, 1, 0),
+	vec3 (0, -1, 0),
+	vec3 (-1, 0, 0),
+	vec3 (1, 0, 0),
+	vec3 (0, 0, 1),
+	vec3 (0, 0, -1)
+);
+
+void	decodeInfo()
 {
 	pos = vec3(float((info1 >> X_OFFSET) & X_MASK) / 100.0, float((info1 >> Y_OFFSET) & Y_MASK) / 100.0, float(info1 & Z_MASK) / 100.0);
+
+	normal = Normals[(info1 >> N_OFFSET) & N_MASK];
 }
 
 void main()
 {
-	decodePos();
+	decodeInfo();
+	
 	Opos = pos;
+	Onormal = normal;
 
 	gl_Position = proj * view * model * vec4(pos, 1.0);
 }

@@ -6,12 +6,14 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 07:58:45 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 22:14:03 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/19 12:28:30 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WINDOW_HPP
 # define WINDOW_HPP
+
+# include <Engine/Render/CameraManager.hpp>
 
 # include <array>
 # include <stdexcept>
