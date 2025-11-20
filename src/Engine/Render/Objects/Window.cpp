@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 08:05:33 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 12:29:12 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/20 14:28:13 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,11 @@ Window::Window()
 
 	glClearColor(0.5f, 0.5f, 0.5f, 1.f);
 	glEnable(GL_DEPTH_TEST);
-	// glEnable(GL_CULL_FACE); Put Back Later ==================
-	// glCullFace(GL_BACK);
-	// glFrontFace(GL_CW);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

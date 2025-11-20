@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 22:55:29 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 21:08:47 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/20 16:20:38 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,6 @@ int		noiseMap[2][2] = {
 	{0, 1},
 	{0, 1}
 };
-
-/*
-	PRINT pos.x AND "; " AND pos.y AND ": " AND (pos.x + pos.y) / Chunk::CHUNKSIZE ENDL;
-
-	return ((pos.x + pos.y) / Chunk::CHUNKSIZE);
-*/
-
-
-float	Chunk::_genHeight(const glm::vec2 &pos)
-{
-	float maxDist = glm::distance(glm::vec2{0, 0}, glm::vec2{Chunk::CHUNKSIZE / 2.f, Chunk::CHUNKSIZE / 2.f});
-	// PRINT pos.x AND "; " AND pos.y AND ": " AND (pos.x + pos.y) / Chunk::CHUNKSIZE ENDL;
-	return ((maxDist - glm::distance(pos, glm::vec2{Chunk::CHUNKSIZE / 2.f, Chunk::CHUNKSIZE / 2.f})));
-	return (glm::mod((pos.x + pos.y), Chunk::BLOCKSIZE * 2.f));
-}
 
 int seed = 6967;
 
@@ -142,11 +127,9 @@ void	Chunk::draw()
 
 	ShaderManager::setMat4("model", _matrice);
 
-	// PRINT _nbVertices ENDL;
-
 	glBindVertexArray(_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, _nbVertices);
-	glBindVertexArray(0);
+	// glBindVertexArray(0);
 }
 
 void	Chunk::unload()
@@ -201,7 +184,7 @@ void	Chunk::remove()
 		glDeleteVertexArrays(1, &_VAO);
 	_VAO = 0;
 
-	_RawLayers.clear();
+	_RawChunk.clear();
 	_vertices.clear();
 	_vertices.shrink_to_fit();
 	_nbVertices = 0;
@@ -213,7 +196,6 @@ void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &
 		return;
 
 	Chunk::BLOCKSIZE = blocksize;
-	// Chunk::CHUNKSIZE = chunksize;
 	Chunk::CHUNKSIZE = chunksize / blocksize;
 
 	_usedBlocksize = targetSize;
@@ -221,7 +203,6 @@ void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &
 
 	_pos = pos;
 	_matrice = glm::translate(glm::mat4(1.f), {pos.x, 0, pos.y});
-	// _matrice = glm::mat4(1.f);
 
 	_RawChunk.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);
 
@@ -240,33 +221,12 @@ float Increment(int dec, int inc)
 
 void	Chunk::_genLayers()
 {
-	// for (int y = 0; y < Chunk::CHUNKSIZE; ++y)
-	// {
-	// 	float By = y / Chunk::BLOCKSIZE;
-	// 	for (int x = 0; x < Chunk::CHUNKSIZE; ++x)
-	// 	{
-	// 		float Bx = x / Chunk::BLOCKSIZE;
-	// 		for (int yo = 0; yo < 1 / Chunk::BLOCKSIZE; ++yo)
-	// 		{
-	// 			float ByyoCB = (By + yo) * (Chunk::CHUNKSIZE / Chunk::BLOCKSIZE);
-	// 			for (int xo = 0; xo < 1 / Chunk::BLOCKSIZE; ++xo)
-	// 			{
-	// 				float	height = Increment((calcNoise({y + yo * Chunk::BLOCKSIZE + _pos.y, x + xo * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
-
-	// 				_RawLayers[height].blocks[ByyoCB + (Bx + xo)] = 1;
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	for (int y = 0; y < Chunk::CHUNKSIZE; ++y)
 	{
 		for (int x = 0; x < Chunk::CHUNKSIZE; ++x)
 		{
-			// PRERR Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE) AND "; " AND y * Chunk::CHUNKSIZE + x AND "; " AND Chunk::CHUNKSIZE ENDL;
 			float	height = Increment((calcNoise({y * Chunk::BLOCKSIZE + _pos.y, x * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
 			_RawChunk[y * Chunk::CHUNKSIZE + x] = height;
-			// _RawLayers[height].blocks[y * Chunk::CHUNKSIZE + x] = 1;
 		}
 	}
 }
@@ -319,180 +279,74 @@ void	Chunk::_genVertices()
 	_vertices.shrink_to_fit();
 	_nbVertices = 0;
 
-	float	min = _RawLayers.begin()->first;
-
-	float	x = 0;
-	float	counter = 0;
-	float	z = 0;
-
-	for (int i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / _LOD; i += _LOD)
+	for (float y = 0; y < Chunk::CHUNKSIZE / _LOD; y += 1)
 	{
-		glm::dvec3 pos = glm::dvec3(
-			x,
-			_RawChunk[i] - (_LOD * Chunk::BLOCKSIZE),
-			z
-		);
-
-
-		// top face
-		_addVertex(pos + V1, TOP);
-		_addVertex(pos + V2, TOP);
-		_addVertex(pos + V3, TOP);
-
-		_addVertex(pos + V1, TOP);
-		_addVertex(pos + V3, TOP);
-		_addVertex(pos + V4, TOP);
-
-
-		// side faces
-		_addVertex(pos + V1, WEST);
-		_addVertex(pos + V4, WEST);
-		_addVertex(pos + V8, WEST);
-	
-		_addVertex(pos + V1, WEST);
-		_addVertex(pos + V8, WEST);
-		_addVertex(pos + V5, WEST);
-
-
-		_addVertex(pos + V2, NORTH);
-		_addVertex(pos + V1, NORTH);
-		_addVertex(pos + V5, NORTH);
-	
-		_addVertex(pos + V2, NORTH);
-		_addVertex(pos + V5, NORTH);
-		_addVertex(pos + V6, NORTH);
-
-
-		_addVertex(pos + V3, EAST);
-		_addVertex(pos + V2, EAST);
-		_addVertex(pos + V6, EAST);
-	
-		_addVertex(pos + V3, EAST);
-		_addVertex(pos + V6, EAST);
-		_addVertex(pos + V7, EAST);
-
-
-		_addVertex(pos + V4, SOUTH);
-		_addVertex(pos + V3, SOUTH);
-		_addVertex(pos + V7, SOUTH);
-	
-		_addVertex(pos + V4, SOUTH);
-		_addVertex(pos + V7, SOUTH);
-		_addVertex(pos + V8, SOUTH);
-
-
-		// bot
-		_addVertex(pos + V5, BOT);
-		_addVertex(pos + V6, BOT);
-		_addVertex(pos + V7, BOT);
-		
-		_addVertex(pos + V5, BOT);
-		_addVertex(pos + V7, BOT);
-		_addVertex(pos + V8, BOT);
-
-
-		x += _usedBlocksize;
-		counter += _LOD;
-		if (counter >= Chunk::CHUNKSIZE)
+		for (float x = 0; x < Chunk::CHUNKSIZE / _LOD; x += 1)
 		{
-			x = 0;
-			counter = 0;
-			z += _usedBlocksize;
+			glm::dvec3 pos = glm::dvec3(
+				x * _usedBlocksize,
+				glm::floor(_RawChunk[y * _LOD * Chunk::CHUNKSIZE + x * _LOD] / _usedBlocksize) * _usedBlocksize,
+				y * _usedBlocksize
+			);
+
+
+			// top face
+			_addVertex(pos + V1, TOP);
+			_addVertex(pos + V2, TOP);
+			_addVertex(pos + V3, TOP);
+
+			_addVertex(pos + V1, TOP);
+			_addVertex(pos + V3, TOP);
+			_addVertex(pos + V4, TOP);
+
+
+			// side faces
+			_addVertex(pos + V1, WEST);
+			_addVertex(pos + V4, WEST);
+			_addVertex(pos + V8, WEST);
+		
+			_addVertex(pos + V1, WEST);
+			_addVertex(pos + V8, WEST);
+			_addVertex(pos + V5, WEST);
+
+
+			_addVertex(pos + V2, NORTH);
+			_addVertex(pos + V1, NORTH);
+			_addVertex(pos + V5, NORTH);
+		
+			_addVertex(pos + V2, NORTH);
+			_addVertex(pos + V5, NORTH);
+			_addVertex(pos + V6, NORTH);
+
+
+			_addVertex(pos + V3, EAST);
+			_addVertex(pos + V2, EAST);
+			_addVertex(pos + V6, EAST);
+		
+			_addVertex(pos + V3, EAST);
+			_addVertex(pos + V6, EAST);
+			_addVertex(pos + V7, EAST);
+
+
+			_addVertex(pos + V4, SOUTH);
+			_addVertex(pos + V3, SOUTH);
+			_addVertex(pos + V7, SOUTH);
+		
+			_addVertex(pos + V4, SOUTH);
+			_addVertex(pos + V7, SOUTH);
+			_addVertex(pos + V8, SOUTH);
+
+
+			// // bot
+			// _addVertex(pos + V5, BOT);
+			// _addVertex(pos + V6, BOT);
+			// _addVertex(pos + V7, BOT);
+			
+			// _addVertex(pos + V5, BOT);
+			// _addVertex(pos + V7, BOT);
+			// _addVertex(pos + V8, BOT);
 		}
 	}
 
 	_nbVertices = _vertices.size();
-
-	_RawLayers.clear();
 }
-
-
-
-
-
-/*
-for (auto layer : _RawLayers)
-	{
-		float	x = 0;
-		float	y = 0;
-		float	z = 0;
-		int		counter = 0;
-		uint8_t	*blocks = layer.second.blocks.data();
-		// for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE); ++i)
-		for (uint64_t i = 0; i < Chunk::CHUNKSIZE * Chunk::CHUNKSIZE; i += _LOD)
-		{
-			if (blocks[i])
-			{
-				glm::dvec3 pos = glm::dvec3(
-					x,
-					layer.first,
-					z
-				);
-
-				// top face
-				_addVertex(pos + V1, TOP);
-				_addVertex(pos + V2, TOP);
-				_addVertex(pos + V3, TOP);
-
-				_addVertex(pos + V1, TOP);
-				_addVertex(pos + V3, TOP);
-				_addVertex(pos + V4, TOP);
-
-
-				// side faces
-				_addVertex(pos + V1, WEST);
-				_addVertex(pos + V4, WEST);
-				_addVertex(pos + V8, WEST);
-			
-				_addVertex(pos + V1, WEST);
-				_addVertex(pos + V8, WEST);
-				_addVertex(pos + V5, WEST);
-
-
-				_addVertex(pos + V2, NORTH);
-				_addVertex(pos + V1, NORTH);
-				_addVertex(pos + V5, NORTH);
-			
-				_addVertex(pos + V2, NORTH);
-				_addVertex(pos + V5, NORTH);
-				_addVertex(pos + V6, NORTH);
-
-
-				_addVertex(pos + V3, EAST);
-				_addVertex(pos + V2, EAST);
-				_addVertex(pos + V6, EAST);
-			
-				_addVertex(pos + V3, EAST);
-				_addVertex(pos + V6, EAST);
-				_addVertex(pos + V7, EAST);
-
-
-				_addVertex(pos + V4, SOUTH);
-				_addVertex(pos + V3, SOUTH);
-				_addVertex(pos + V7, SOUTH);
-			
-				_addVertex(pos + V4, SOUTH);
-				_addVertex(pos + V7, SOUTH);
-				_addVertex(pos + V8, SOUTH);
-
-
-				// bot
-				_addVertex(pos + V5, BOT);
-				_addVertex(pos + V6, BOT);
-				_addVertex(pos + V7, BOT);
-				
-				_addVertex(pos + V5, BOT);
-				_addVertex(pos + V7, BOT);
-				_addVertex(pos + V8, BOT);
-
-			}
-			x += _usedBlocksize;
-			counter += _LOD;
-			if (counter == Chunk::CHUNKSIZE)
-			{
-				x = 0;
-				counter = 0;
-				z += _usedBlocksize;
-			}
-		}
-	}*/

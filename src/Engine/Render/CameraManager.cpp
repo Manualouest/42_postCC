@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:49:17 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 12:27:46 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/20 10:51:06 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ glm::mat4	CameraManager::getViewMatrix()
 void	CameraManager::_updatePos()
 {
 	if (Window::getRepeatInput(GLFW_KEY_LEFT_SHIFT))
-		_speed = 10. * Window::getDeltaTime();
+		_speed = 100. * Window::getDeltaTime();
 	else
 		_speed = 1 * Window::getDeltaTime();
 

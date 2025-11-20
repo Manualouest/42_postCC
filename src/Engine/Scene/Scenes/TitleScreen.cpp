@@ -6,17 +6,18 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 12:34:50 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 21:05:54 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/20 15:59:53 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Engine/Scene/Scenes/TitleScreen.hpp>
 
-const int clustersize = 10;
-const int nbchunks = clustersize * clustersize;
+const int clustersizex = 28;
+const int clustersizey = 15;
+const int nbchunks = clustersizey * clustersizex;
 
 float startLOD = 0.25;
-float currentLOD = 1;
+float currentLOD = 0.25;
 
 Chunk	chunkTest[nbchunks];
 int		x = 0;
@@ -26,6 +27,12 @@ void	TitleScreen::init()
 {
 	if (_isInit)
 		return ;
+
+	ShaderManager::addShader("object", "assets/shaders/modeltest");
+	ModelManager::addModel("miku", "assets/objects/miku2/miku2.obj");
+	ModelManager::getModel("miku").genTextureArray("miku");
+	ModelManager::getModel("miku").scale({10, 10, 10});
+
 
 	ShaderManager::addShader("chunk", "assets/shaders/chunk");
 
@@ -65,7 +72,11 @@ void	TitleScreen::processInputs()
 		if (currentLOD < 32)
 		{
 			currentLOD *= 2;
+			PRINT "LOD UP" ENDL;
 			chunkTest[0].regenerate(currentLOD);
+			chunkTest[1].regenerate(currentLOD);
+			chunkTest[clustersizex].regenerate(currentLOD);
+			chunkTest[clustersizex + 1].regenerate(currentLOD);
 		}
 	}
 	if (Window::getPressInput(GLFW_KEY_KP_SUBTRACT))
@@ -75,6 +86,9 @@ void	TitleScreen::processInputs()
 			currentLOD /= 2;
 			PRINT "LOD DOWN" ENDL;
 			chunkTest[0].regenerate(currentLOD);
+			chunkTest[1].regenerate(currentLOD);
+			chunkTest[clustersizex].regenerate(currentLOD);
+			chunkTest[clustersizex + 1].regenerate(currentLOD);
 		}
 	}
 
@@ -100,38 +114,29 @@ void	TitleScreen::draw()
 	
 	if (y >= 0)
 	{
-		// PRERR x AND "; " AND y AND "; " AND y * clustersize + x ENDL;
-		// if ((x + y) % 6 == 5)
-		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 4, 32);
-		// else if ((x + y) % 6 == 4)
-			chunkTest[y * clustersize + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD);
-		// else if ((x + y) % 6 == 3)
-		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.5, 32);
-		// else if ((x + y) % 6 == 2)
-		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.25, 32);
-		// else if ((x + y) % 6 == 1)
-		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.2, 32);
-		// else
-		// 	chunkTest[y * clustersize + x].generate({x * 32, y * 32}, 0.1, 32);
+		// PRERR x AND "; " AND y AND "; " AND y * clustersizex + x ENDL;
+
+		if (x < 8)
+			chunkTest[y * clustersizex + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD);
+		else
+			chunkTest[y * clustersizex + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD * glm::pow(2, std::min((x - 8) / 5 + 2, 7)));
 
 		x ++;
-		if (x == clustersize)
+		if (x == clustersizex)
 		{
 			x = 0;
 			y ++;
-			if (y == (clustersize))
+			if (y == (clustersizey))
 				y = -1;
 		}
 	}
-	// else
-	// {
-	// 	if (y == -1)
-	// 	{
-	// 		chunkTest[0].regenerate(2);
-	// 		y --;
-	// 	}
-	// }
 
 	for (int i = 0; i < nbchunks; ++i)
 		chunkTest[i].draw();
+
+
+	ShaderManager::bindShader("object");
+	CameraManager::setViewProjMatrix();
+	TextureManager::useArray("miku", "texts", 0);
+	ModelManager::getModel("miku").draw();
 }
