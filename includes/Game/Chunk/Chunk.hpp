@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 20:40:12 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/19 21:06:46 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/24 18:39:43 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 # include <map>
 # include <vector>
+# include <bitset>
 
 # include <glad/glad.h>
 # include <glfw/glfw3.h>
@@ -39,7 +40,11 @@
 # define DEFAULT_BLOCKSIZE	1.f
 # define DEFAULT_CHUNKSIZE	32.f
 
-struct Layer;
+struct Strip
+{
+	float	height, size;
+	uint8_t	type;
+};
 
 enum Normals
 {
@@ -49,6 +54,13 @@ enum Normals
 	EAST,
 	NORTH,
 	SOUTH
+};
+
+enum BlockTypes
+{
+	GRASS,
+	DIRT,
+	STONE
 };
 
 class Chunk
@@ -62,7 +74,10 @@ class Chunk
 		void	upload();
 		void	remove();
 
-		void	regenerate(const float &targetSize) {unload(); _usedBlocksize = targetSize; _LOD = _usedBlocksize / BLOCKSIZE; PRINT _usedBlocksize AND "; " AND _LOD ENDL; _genVertices();}
+		glm::vec2	getPos() const {return(_pos);}
+
+		void	regenerate(const glm::vec2 &pos, const float &blocksize, const float &chunksize, const float &targetSize) {remove(); generate(pos, blocksize, chunksize, targetSize);}
+		void	changeLOD(const float &targetSize) {unload(); _usedBlocksize = targetSize; _LOD = _usedBlocksize / BLOCKSIZE; /*PRINT _usedBlocksize AND "; " AND _LOD ENDL*/; _genVertices();}
 		void	generate(const glm::vec2 &pos) {generate(pos, DEFAULT_BLOCKSIZE, DEFAULT_CHUNKSIZE);}
 		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize) {generate(pos, blocksize, chunksize, 1);}
 		void	generate(const glm::vec2 &pos, const float &blocksize, const float &chunksize, const float &targetSize);
@@ -81,24 +96,20 @@ class Chunk
 		int		_nbVertices = 0;
 		GLuint	_VAO = 0;
 		GLuint	_VBO = 0;
+		GLuint	_EBO = 0;
 
 		float	_usedBlocksize;
 		float	_LOD;
 
-		glm::vec2	_pos;
+		glm::vec2	_pos = {0, 0};
 		glm::mat4	_matrice;
 
-		std::map<float, Layer>	_RawLayers;
-		std::vector<float>		_RawChunk;
-		std::vector<uint64_t>	_vertices;
+		std::vector<std::vector<Strip>>		_strips;
+		std::vector<uint64_t>				_vertices;
+
+		// old one
+		std::vector<float>					_RawChunk;
 };
 
-struct Layer
-{
-	Layer() {blocks.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);} // / (Chunk::BLOCKSIZE * Chunk::BLOCKSIZE)
-	~Layer() {blocks.clear(); blocks.shrink_to_fit();}
-
-	std::vector<uint8_t>	blocks;
-};
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 15:49:41 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/06 13:14:45 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/24 16:30:15 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,9 @@ void	Engine::_init()
 
 void	Engine::_renderLoop()
 {
-	bool test = true;
-
 	while (Window::isRunning())
 	{
 		Window::startFrame();
-
-		if (Window::getPressInput(GLFW_KEY_ENTER))
-		{
-			test = !test;
-			if (!test)
-				SceneManager::unloadScene("title");
-			else
-				SceneManager.setCurrent("title");
-		}
 
 		SceneManager::getCurrent()->processInputs();
 		SceneManager::getCurrent()->update();

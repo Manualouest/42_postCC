@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 17:11:36 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/18 23:28:22 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/24 14:05:40 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,12 @@ class	CameraManager
 		static void			setViewProjMatrix();
 		static glm::mat4	getViewMatrix();
 
-		static float		getYaw()	{_checkInstance(); return (_instance->_yaw);}
-		static float		getPitch()	{_checkInstance(); return (_instance->_pitch);}
-		static glm::vec3	getPos()	{_checkInstance(); return (_instance->_pos);}
-		static double		getSensi()	{_checkInstance(); return (_instance->_sensi);}
-		static double		getSpeed()	{_checkInstance(); return (_instance->_speed);}
+		static float		getYaw()		{_checkInstance(); return (_instance->_yaw);}
+		static float		getPitch()		{_checkInstance(); return (_instance->_pitch);}
+		static glm::vec3	getPos()		{_checkInstance(); return (_instance->_pos);}
+		static glm::vec2	getPlanePos()	{_checkInstance(); return (glm::vec2{_instance->_pos.x, _instance->_pos.z});}
+		static double		getSensi()		{_checkInstance(); return (_instance->_sensi);}
+		static double		getSpeed()		{_checkInstance(); return (_instance->_speed);}
 
 		static void	setYaw(const float &yaw)		{_checkInstance(); _instance->_yaw = glm::mod(yaw, 360.f);}
 		static void	setPitch(const float &pitch)	{_checkInstance(); _instance->_pitch = glm::clamp(pitch, -89.f, 89.f);}

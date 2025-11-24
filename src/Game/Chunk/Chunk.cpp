@@ -6,7 +6,7 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 22:55:29 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/20 16:20:38 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/24 19:06:33 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ float	calcNoise(const glm::vec2 &pos, float freq, float amp, int noisiness)
 	else if (res < -1.0f)
 		res = -1.0f;
 
-	return (res);
+	return ((res + 1) / 2 * 200);
 }
 
 // =======================================================================
@@ -123,7 +123,10 @@ void	Chunk::draw()
 		return ;
 
 	if (!_uploaded)
+	{
 		upload();
+		return ;
+	}
 
 	ShaderManager::setMat4("model", _matrice);
 
@@ -141,6 +144,9 @@ void	Chunk::unload()
 	if (_VBO)
 		glDeleteBuffers(1, &_VBO);
 	_VBO = 0;
+	if (_EBO)
+		glDeleteVertexArrays(1, &_EBO);
+	_EBO = 0;
 	if (_VAO)
 		glDeleteVertexArrays(1, &_VAO);
 	_VAO = 0;
@@ -180,11 +186,16 @@ void	Chunk::remove()
 	if (_VBO)
 		glDeleteBuffers(1, &_VBO);
 	_VBO = 0;
+	if (_EBO)
+		glDeleteVertexArrays(1, &_EBO);
+	_EBO = 0;
 	if (_VAO)
 		glDeleteVertexArrays(1, &_VAO);
 	_VAO = 0;
 
-	_RawChunk.clear();
+	// _RawChunk.clear();
+	_strips.clear();
+	_strips.shrink_to_fit();
 	_vertices.clear();
 	_vertices.shrink_to_fit();
 	_nbVertices = 0;
@@ -204,7 +215,8 @@ void	Chunk::generate(const glm::vec2 &pos, const float &blocksize, const float &
 	_pos = pos;
 	_matrice = glm::translate(glm::mat4(1.f), {pos.x, 0, pos.y});
 
-	_RawChunk.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);
+	// _RawChunk.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE, 0);
+	_strips.resize(Chunk::CHUNKSIZE * Chunk::CHUNKSIZE);
 
 	_genLayers();
 	_genVertices();
@@ -225,8 +237,26 @@ void	Chunk::_genLayers()
 	{
 		for (int x = 0; x < Chunk::CHUNKSIZE; ++x)
 		{
-			float	height = Increment((calcNoise({y * Chunk::BLOCKSIZE + _pos.y, x * Chunk::BLOCKSIZE + _pos.x}, 0.005, 1, 6) + 1) / 2 * 200 * 100, Chunk::BLOCKSIZE * 100) / 100;
-			_RawChunk[y * Chunk::CHUNKSIZE + x] = height;
+			// ========================== For 2D Noise
+			float	height = Increment(calcNoise({x * Chunk::BLOCKSIZE + _pos.x, y * Chunk::BLOCKSIZE + _pos.y}, 0.005, 1, 6) * 100, Chunk::BLOCKSIZE * 100) / 100;
+			// _RawChunk[y * Chunk::CHUNKSIZE + x] = height; // Old one
+			_strips[y * Chunk::CHUNKSIZE + x].push_back({height, height, 0});
+
+		
+			// ========================== For 3D Noise
+			// int slicePos = y * Chunk::CHUNKSIZE + x;
+			// int	currentType = -1;
+			// for (int z = 254; z >= 0; --z)
+			// {
+			// 	int	type = getBlockType(glm::vec3({x * Chunk::BLOCKSIZE + _pos.x, y * Chunk::BLOCKSIZE + _pos.y, z * Chunk::BLOCKSIZE})); // the noise function
+			// 	if (type != currentType)
+			// 	{
+			// 		currentType = type;
+			// 		_strips[slicePos].insert(_strips[slicePos].begin(), Strip{z * Chunk::BLOCKSIZE, Chunk::BLOCKSIZE, type});
+			// 	}
+			// 	else
+			// 		_strips[slicePos][0].size += Chunk::BLOCKSIZE;
+			// }
 		}
 	}
 }
@@ -245,6 +275,35 @@ void	Chunk::_addVertex(const glm::dvec3 &pos, const uint64_t &normID)
 	);
 }
 
+
+float	calFaceSize(const Strip &strip, const std::vector<Strip> &oppositeStrip)
+{
+	int		i = 0;
+	int		ii = 0;
+	int		lastSize = 0;
+
+	while (i < oppositeStrip.size() && oppositeStrip[i].height < strip.height)
+		i ++;
+	
+	if (oppositeStrip[i].height - oppositeStrip[i].size > strip.height)
+		i --;
+	if (i == 0)
+		return (0);
+
+	if (oppositeStrip[i].height < strip.height - strip.size)
+		return (strip.size);
+
+	while (ii < strip.size)
+	{
+		if (strip.height - ii <= oppositeStrip[i].height)
+		{
+			while (ii < strip.size && strip.height - ii <= oppositeStrip[i].height)
+		}
+		ii ++;
+	}
+}
+
+
 //      1_______2
 //     /:      /│
 //    4_:_____3 │                N
@@ -261,25 +320,140 @@ void	Chunk::_addVertex(const glm::dvec3 &pos, const uint64_t &normID)
 // 	vec3 (0, 0, -1)	SOUTH
 
 
+// ============ old ones, extruded upward
+// offsets for the cube's edges: NO MORE MAGIC VECTORS
+// glm::dvec3 V1 = glm::dvec3(0, _usedBlocksize, _usedBlocksize);
+// glm::dvec3 V2 = glm::dvec3(_usedBlocksize, _usedBlocksize, _usedBlocksize);
+// glm::dvec3 V3 = glm::dvec3(_usedBlocksize, _usedBlocksize, 0);
+// glm::dvec3 V4 = glm::dvec3(0, _usedBlocksize, 0);
+// glm::dvec3 V5 = glm::dvec3(0, 0, _usedBlocksize);
+// glm::dvec3 V6 = glm::dvec3(_usedBlocksize, 0, _usedBlocksize);
+// glm::dvec3 V7 = glm::dvec3(_usedBlocksize, 0, 0);
+// glm::dvec3 V8 = glm::dvec3(0, 0, 0);
 
 void	Chunk::_genVertices()
 {
-
-	// offsets for the cube's edges: NO MORE MAGIC VECTORS
-	glm::dvec3 V1 = glm::dvec3(0, _usedBlocksize, _usedBlocksize);
-	glm::dvec3 V2 = glm::dvec3(_usedBlocksize, _usedBlocksize, _usedBlocksize);
-	glm::dvec3 V3 = glm::dvec3(_usedBlocksize, _usedBlocksize, 0);
-	glm::dvec3 V4 = glm::dvec3(0, _usedBlocksize, 0);
-	glm::dvec3 V5 = glm::dvec3(0, 0, _usedBlocksize);
-	glm::dvec3 V6 = glm::dvec3(_usedBlocksize, 0, _usedBlocksize);
-	glm::dvec3 V7 = glm::dvec3(_usedBlocksize, 0, 0);
-	glm::dvec3 V8 = glm::dvec3(0, 0, 0);
+	glm::dvec3 V1 = glm::dvec3(0, 0, _usedBlocksize);
+	glm::dvec3 V2 = glm::dvec3(_usedBlocksize, 0, _usedBlocksize);
+	glm::dvec3 V3 = glm::dvec3(_usedBlocksize, 0, 0);
+	glm::dvec3 V4 = glm::dvec3(0, 0, 0);
+	glm::dvec3 V5 = glm::dvec3(0, -_usedBlocksize, _usedBlocksize);
+	glm::dvec3 V6 = glm::dvec3(_usedBlocksize, -_usedBlocksize, _usedBlocksize);
+	glm::dvec3 V7 = glm::dvec3(_usedBlocksize, -_usedBlocksize, 0);
+	glm::dvec3 V8 = glm::dvec3(0, -_usedBlocksize, 0);
 
 	_vertices.clear();
 	_vertices.shrink_to_fit();
 	_nbVertices = 0;
 
+	glm::vec3	faceMod = {0, 0, 0};
+
 	for (float y = 0; y < Chunk::CHUNKSIZE / _LOD; y += 1)
+	{
+		for (float x = 0; x < Chunk::CHUNKSIZE / _LOD; x += 1)
+		{
+			for (Strip &strip : _strips[y * _LOD * Chunk::CHUNKSIZE + x * _LOD])
+			{
+				glm::dvec3 pos = glm::dvec3(
+					x * _usedBlocksize,
+					strip.height * _usedBlocksize,
+					y * _usedBlocksize
+				);
+
+				// top face
+				_addVertex(pos + V1, TOP);
+				_addVertex(pos + V2, TOP);
+				_addVertex(pos + V3, TOP);
+
+				_addVertex(pos + V1, TOP);
+				_addVertex(pos + V3, TOP);
+				_addVertex(pos + V4, TOP);
+
+
+
+
+				// =========== side faces ===========
+
+				if (x == 0)
+					faceMod.y = 0;
+				else
+					faceMod.y = calFaceSize(strip, _strips[y * _LOD * Chunk::CHUNKSIZE + (x - 1) * _LOD]) * _usedBlocksize;
+
+				_addVertex(pos + V1, WEST);
+				_addVertex(pos + V4, WEST);
+				_addVertex(pos + V8, WEST);
+			
+				_addVertex(pos + V1, WEST);
+				_addVertex(pos + V8, WEST);
+				_addVertex(pos + V5, WEST);
+
+
+
+
+				if (y == 0)
+					faceMod.y = 0;
+				else
+					faceMod.y = calFaceSize(strip, _strips[(y - 1) * _LOD * Chunk::CHUNKSIZE + x * _LOD]) * _usedBlocksize;
+
+				_addVertex(pos + V2, NORTH);
+				_addVertex(pos + V1, NORTH);
+				_addVertex(pos + V5, NORTH);
+			
+				_addVertex(pos + V2, NORTH);
+				_addVertex(pos + V5, NORTH);
+				_addVertex(pos + V6, NORTH);
+
+
+
+
+				if (x + 1 >= Chunk::CHUNKSIZE / _LOD)
+					faceMod.y = 0;
+				else
+					faceMod.y = calFaceSize(strip, _strips[y * _LOD * Chunk::CHUNKSIZE + (x + 1) * _LOD]) * _usedBlocksize;
+
+				_addVertex(pos + V3, EAST);
+				_addVertex(pos + V2, EAST);
+				_addVertex(pos + V6, EAST);
+			
+				_addVertex(pos + V3, EAST);
+				_addVertex(pos + V6, EAST);
+				_addVertex(pos + V7, EAST);
+
+
+
+
+				if (y + 1 >= Chunk::CHUNKSIZE / _LOD)
+					faceMod.y = 0;
+				else
+					faceMod.y = calFaceSize(strip, _strips[(y + 1) * _LOD * Chunk::CHUNKSIZE + x * _LOD]) * _usedBlocksize;
+
+				_addVertex(pos + V4, SOUTH);
+				_addVertex(pos + V3, SOUTH);
+				_addVertex(pos + V7, SOUTH);
+			
+				_addVertex(pos + V4, SOUTH);
+				_addVertex(pos + V7, SOUTH);
+				_addVertex(pos + V8, SOUTH);
+
+
+
+
+			}
+
+			
+		}
+	}
+
+	_nbVertices = _vertices.size();
+}
+
+
+
+/*
+============================ Old one, was not using the strips
+
+
+for (float y = 0; y < Chunk::CHUNKSIZE / _LOD; y += 1)
 	{
 		for (float x = 0; x < Chunk::CHUNKSIZE / _LOD; x += 1)
 		{
@@ -348,5 +522,5 @@ void	Chunk::_genVertices()
 		}
 	}
 
-	_nbVertices = _vertices.size();
-}
+
+*/

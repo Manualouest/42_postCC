@@ -6,20 +6,25 @@
 /*   By: mbirou <mbirou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 12:34:50 by mbirou            #+#    #+#             */
-/*   Updated: 2025/11/20 15:59:53 by mbirou           ###   ########.fr       */
+/*   Updated: 2025/11/24 16:29:30 by mbirou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Engine/Scene/Scenes/TitleScreen.hpp>
 
-const int clustersizex = 28;
-const int clustersizey = 15;
+const int clustersizex = 10;
+const int clustersizey = 10;
 const int nbchunks = clustersizey * clustersizex;
+int sideOffset = clustersizex / 2 * 32;
 
 float startLOD = 0.25;
 float currentLOD = 0.25;
 
-Chunk	chunkTest[nbchunks];
+glm::ivec2	lastCamPos = {0, 0};
+
+Chunk					chunkTest[nbchunks];
+std::vector<Chunk*>		waitingChunks;
+std::vector<glm::vec2>	requestedPos;
 int		x = 0;
 int		y = 0;
 
@@ -28,13 +33,25 @@ void	TitleScreen::init()
 	if (_isInit)
 		return ;
 
-	ShaderManager::addShader("object", "assets/shaders/modeltest");
-	ModelManager::addModel("miku", "assets/objects/miku2/miku2.obj");
-	ModelManager::getModel("miku").genTextureArray("miku");
-	ModelManager::getModel("miku").scale({10, 10, 10});
+	// ShaderManager::addShader("object", "assets/shaders/modeltest");
+	// ModelManager::addModel("miku", "assets/objects/miku2/miku2.obj");
+	// ModelManager::getModel("miku").genTextureArray("miku");
+	// ModelManager::getModel("miku").scale({10, 10, 10});
 
 
 	ShaderManager::addShader("chunk", "assets/shaders/chunk");
+
+
+
+	for (int y = 0; y < clustersizey; ++y)
+	{
+		for (int x = 0; x < clustersizex; ++x)
+		{
+			chunkTest[y * clustersizex + x].regenerate(lastCamPos + glm::ivec2{-(sideOffset) + 32 * y, -(sideOffset) + 32 * x}, startLOD, 32, currentLOD);
+		}
+	}
+
+
 
 	_isInit = true;
 }
@@ -55,7 +72,7 @@ void	TitleScreen::processInputs()
 	if (!_isInit)
 		return ;
 
-	if (Window::getPressInput(GLFW_KEY_LEFT_CONTROL))
+	if (Window::getPressMouseInput(GLFW_MOUSE_BUTTON_MIDDLE))
 	{
 		Window::setlockMouse(!Window::getlockMouse());
 		if (Window::getlockMouse())
@@ -72,11 +89,12 @@ void	TitleScreen::processInputs()
 		if (currentLOD < 32)
 		{
 			currentLOD *= 2;
-			PRINT "LOD UP" ENDL;
-			chunkTest[0].regenerate(currentLOD);
-			chunkTest[1].regenerate(currentLOD);
-			chunkTest[clustersizex].regenerate(currentLOD);
-			chunkTest[clustersizex + 1].regenerate(currentLOD);
+			for (auto &chunk : chunkTest)
+				chunk.changeLOD(currentLOD);
+			// chunkTest[0].changeLOD(currentLOD);
+			// chunkTest[1].changeLOD(currentLOD);
+			// chunkTest[clustersizex].changeLOD(currentLOD);
+			// chunkTest[clustersizex + 1].changeLOD(currentLOD);
 		}
 	}
 	if (Window::getPressInput(GLFW_KEY_KP_SUBTRACT))
@@ -84,11 +102,12 @@ void	TitleScreen::processInputs()
 		if (currentLOD > startLOD)
 		{
 			currentLOD /= 2;
-			PRINT "LOD DOWN" ENDL;
-			chunkTest[0].regenerate(currentLOD);
-			chunkTest[1].regenerate(currentLOD);
-			chunkTest[clustersizex].regenerate(currentLOD);
-			chunkTest[clustersizex + 1].regenerate(currentLOD);
+			for (auto &chunk : chunkTest)
+				chunk.changeLOD(currentLOD);
+			// chunkTest[0].changeLOD(currentLOD);
+			// chunkTest[1].changeLOD(currentLOD);
+			// chunkTest[clustersizex].changeLOD(currentLOD);
+			// chunkTest[clustersizex + 1].changeLOD(currentLOD);
 		}
 	}
 
@@ -108,35 +127,48 @@ void	TitleScreen::draw()
 	if (!_isInit)
 		return ;
 
-
 	ShaderManager::bindShader("chunk");
 	CameraManager::setViewProjMatrix();
-	
-	if (y >= 0)
+
+
+	if (waitingChunks.empty() && glm::ivec2{CameraManager::getPlanePos()} != lastCamPos)
 	{
-		// PRERR x AND "; " AND y AND "; " AND y * clustersizex + x ENDL;
-
-		if (x < 8)
-			chunkTest[y * clustersizex + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD);
-		else
-			chunkTest[y * clustersizex + x].generate({x * 32, y * 32}, startLOD, 32, currentLOD * glm::pow(2, std::min((x - 8) / 5 + 2, 7)));
-
-		x ++;
-		if (x == clustersizex)
+		lastCamPos = glm::ivec2{CameraManager::getPlanePos()} / 32 * 32;
+		requestedPos.resize(clustersizey * clustersizex, {0, 0});
+		for (int y = 0; y < clustersizey; ++y)
 		{
-			x = 0;
-			y ++;
-			if (y == (clustersizey))
-				y = -1;
+			for (int x = 0; x < clustersizex; ++x)
+			{
+				requestedPos[y * clustersizex + x] = lastCamPos + glm::ivec2{-(sideOffset) + 32 * y, -(sideOffset) + 32 * x};
+				glm::vec2	chunkPos = chunkTest[y * clustersizex + x].getPos();
+				if (chunkPos.y < lastCamPos.y - (sideOffset) || chunkPos.y > lastCamPos.y + (sideOffset)
+						|| chunkPos.x < lastCamPos.x - (sideOffset) || chunkPos.x > lastCamPos.x + (sideOffset))
+					waitingChunks.push_back(&chunkTest[y * clustersizex + x]);
+			}
+		}
+		for (auto &chunk : chunkTest)
+		{
+			if (std::find(requestedPos.begin(), requestedPos.end(), chunk.getPos()) != requestedPos.end())
+				requestedPos.erase(std::find(requestedPos.begin(), requestedPos.end(), chunk.getPos()));
 		}
 	}
+	if (!waitingChunks.empty())
+	{
+		for (int i = 0; i < glm::min(2, (int)waitingChunks.size()); ++i)
+		{
+			waitingChunks[0]->regenerate(requestedPos[0], startLOD, 32, currentLOD);
+			waitingChunks.erase(waitingChunks.begin());
+			requestedPos.erase(requestedPos.begin());
+		}
+	}
+
 
 	for (int i = 0; i < nbchunks; ++i)
 		chunkTest[i].draw();
 
 
-	ShaderManager::bindShader("object");
-	CameraManager::setViewProjMatrix();
-	TextureManager::useArray("miku", "texts", 0);
-	ModelManager::getModel("miku").draw();
+	// ShaderManager::bindShader("object");
+	// CameraManager::setViewProjMatrix();
+	// TextureManager::useArray("miku", "texts", 0);
+	// ModelManager::getModel("miku").draw();
 }
