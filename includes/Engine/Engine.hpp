@@ -29,13 +29,13 @@ class Engine
 		~Engine();
 
 		// need them coded
-		Window			Window;
+		Window			window;
 		CameraManager	camera;
-		SceneManager	SceneManager;
-		ShaderManager	ShaderManager;
-		TextureManager	TextureManager;
-		ModelManager	ModelManager;
-		GuiManager		GuiManager;
+		SceneManager	sceneManager;
+		ShaderManager	shaderManager;
+		TextureManager	textureManager;
+		ModelManager	modelManager;
+		GuiManager		guiManager;
 
 		void	run();
 

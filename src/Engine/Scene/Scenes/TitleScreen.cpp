@@ -91,10 +91,6 @@ void	TitleScreen::processInputs()
 			currentLOD *= 2;
 			for (auto &chunk : chunkTest)
 				chunk.changeLOD(currentLOD);
-			// chunkTest[0].changeLOD(currentLOD);
-			// chunkTest[1].changeLOD(currentLOD);
-			// chunkTest[clustersizex].changeLOD(currentLOD);
-			// chunkTest[clustersizex + 1].changeLOD(currentLOD);
 		}
 	}
 	if (Window::getPressInput(GLFW_KEY_KP_SUBTRACT))
@@ -104,10 +100,6 @@ void	TitleScreen::processInputs()
 			currentLOD /= 2;
 			for (auto &chunk : chunkTest)
 				chunk.changeLOD(currentLOD);
-			// chunkTest[0].changeLOD(currentLOD);
-			// chunkTest[1].changeLOD(currentLOD);
-			// chunkTest[clustersizex].changeLOD(currentLOD);
-			// chunkTest[clustersizex + 1].changeLOD(currentLOD);
 		}
 	}
 

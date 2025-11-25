@@ -32,7 +32,7 @@ void	Engine::run()
 void	Engine::_init()
 {
 	SceneManager::addScene("title", new TitleScreen);
-	SceneManager.setCurrent("title");
+	SceneManager::setCurrent("title");
 	computeNormals();
 }
 

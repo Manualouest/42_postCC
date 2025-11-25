@@ -91,6 +91,7 @@ Window::Window()
 		throw std::runtime_error(RED BOLD UNDL "Glad Failed to Init\n" CLR);
 	}
 	
+	glfwGetWindowSize(_windowData, &WWIDTH, &WHEIGHT);
 	glViewport(0, 0, WWIDTH, WHEIGHT);
 
     glDebugMessageCallback(opengErrorMsg, 0);

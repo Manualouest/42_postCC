@@ -22,7 +22,10 @@ SceneManager::SceneManager()
 SceneManager::~SceneManager()
 {
 	for (auto scene : _scenes)
+	{
+		scene.second->unload();
 		delete(scene.second);
+	}
 	_scenes.clear();
 
 	_instance = NULL;

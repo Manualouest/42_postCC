@@ -38,7 +38,7 @@ void	decodeInfo()
 {
 	pos = vec3(float((info1 >> X_OFFSET) & X_MASK) / 100.0, float((info1 >> Y_OFFSET) & Y_MASK) / 100.0, float(info1 & Z_MASK) / 100.0);
 
-	normal = Normals[(info1 >> N_OFFSET) & N_MASK];
+	normal = Normals[int((info1 >> N_OFFSET) & N_MASK)];
 }
 
 void main()

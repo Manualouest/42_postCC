@@ -58,6 +58,7 @@ enum Normals
 
 enum BlockTypes
 {
+	AIR,
 	GRASS,
 	DIRT,
 	STONE
@@ -89,11 +90,14 @@ class Chunk
 		float	_genHeight(const glm::vec2 &pos);
 		void	_addVertex(const glm::dvec3 &pos, const uint64_t &normID);
 		void	_genLayers();
+		float	calFaceSize(const Strip &strip, const std::vector<Strip> &oppositeStrip);
+		void	addIndexes(const glm::ivec3 &indexes);
 		void	_genVertices();
 
 		bool	_uploaded = false;
 		bool	_generated = false;
 		int		_nbVertices = 0;
+		int		_nbIndices = 0;
 		GLuint	_VAO = 0;
 		GLuint	_VBO = 0;
 		GLuint	_EBO = 0;
@@ -106,6 +110,7 @@ class Chunk
 
 		std::vector<std::vector<Strip>>		_strips;
 		std::vector<uint64_t>				_vertices;
+		std::vector<int>					_indices;
 
 		// old one
 		std::vector<float>					_RawChunk;
